@@ -1,0 +1,116 @@
+*AdvancedJoiners.txt*   More ways to (un-)join lines.
+
+		      ADVANCED JOINERS    by Ingo Karkat
+							 *AdvancedJoiners.vim*
+description			|AdvancedJoiners-description|
+usage				|AdvancedJoiners-usage|
+installation			|AdvancedJoiners-installation|
+configuration			|AdvancedJoiners-configuration|
+integration			|AdvancedJoiners-integration|
+limitations			|AdvancedJoiners-limitations|
+known problems			|AdvancedJoiners-known-problems|
+todo				|AdvancedJoiners-todo|
+history				|AdvancedJoiners-history|
+
+==============================================================================
+DESCRIPTION					 *AdvancedJoiners-description*
+
+This plugin ...
+
+HOW IT WORKS								     *
+
+SOURCE									     *
+(Original Vim tip, Stack Overflow answer, ...)
+
+SEE ALSO								     *
+(Plugins offering complementary functionality, or plugins using this library.)
+
+RELATED WORKS								     *
+(Alternatives from other authors, other approaches, references not used here.)
+
+==============================================================================
+USAGE						       *AdvancedJoiners-usage*
+
+									   *J*
+[count]J		For me, this means "execute J [count] times", not the
+			default "Join [count] lines", which joins one line
+			less that expected.
+
+								   *gJ* *v_gJ*
+[count]gJ, {Visual}gJ	Join lines removing any leading comment characters and
+			following indentation.
+:: This is a      gJ      :: This is a multiline     gJ     :: This is a multiline comment. ~
+:: multiline   -------->  :: comment.             --------> ~
+:: comment. ~
+			On non-comment lines: Fuse lines together, i.e. join
+			and remove any hyphen, whitespace and following
+			indentation.
+The foo-           gJ      The foobar can be ta-      gJ     The foobar can be taken off. ~
+bar can be ta- -------->         ken off.         --------> ~
+      ken off. ~
+
+						     *<Leader>J* *v_<Leader>J*
+[count]<Leader>J
+{Visual}<Leader>J	Query a separator string that is inserted between all
+			joined lines.
+
+						   *<Leader>uj* *v_<Leader>uj*
+[count]<Leader>uj
+{Visual}<Leader>uj	Query a separator pattern and un-join [count] lines,
+			i.e. replace each separator match with a <CR> and
+			proper indent.
+
+==============================================================================
+INSTALLATION					*AdvancedJoiners-installation*
+
+This script is packaged as a |vimball|. If you have the "gunzip" decompressor
+in your PATH, simply edit the *.vmb.gz package in Vim; otherwise, decompress
+the archive first, e.g. using WinZip. Inside Vim, install by sourcing the
+vimball or via the |:UseVimball| command. >
+    vim AdvancedJoiners*.vmb.gz
+    :so %
+To uninstall, use the |:RmVimball| command.
+
+DEPENDENCIES					*AdvancedJoiners-dependencies*
+
+- Requires Vim 7.0 or higher.
+
+==============================================================================
+CONFIGURATION				       *AdvancedJoiners-configuration*
+
+For a permanent configuration, put the following commands into your |vimrc|:
+						       *AdvancedJoiners-remap*
+plugmap
+
+==============================================================================
+INTEGRATION					 *AdvancedJoiners-integration*
+
+The |gJ| command also removes comment prefixes defined in the whitelist of the
+|IndentCommentPrefix.vim| plugin (vimscript #2529)
+(see|g:IndentCommentPrefix_Whitelist|).
+
+==============================================================================
+LIMITATIONS					 *AdvancedJoiners-limitations*
+
+KNOWN PROBLEMS				      *AdvancedJoiners-known-problems*
+
+TODO							*AdvancedJoiners-todo*
+
+IDEAS						       *AdvancedJoiners-ideas*
+
+==============================================================================
+HISTORY						     *AdvancedJoiners-history*
+
+GOAL
+First published version.
+
+0.01	19-Jul-2005
+Started development.
+
+==============================================================================
+Copyright: (C) 2005-2013 Ingo Karkat
+The VIM LICENSE applies to this script; see |copyright|.
+
+Maintainer:	Ingo Karkat <ingo@karkat.de>
+==============================================================================
+ vim:tw=78:ts=8:ft=help:norl:
