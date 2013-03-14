@@ -38,7 +38,8 @@ USAGE						       *AdvancedJoiners-usage*
 
 								   *gJ* *v_gJ*
 [count]gJ, {Visual}gJ	Join lines removing any leading comment characters and
-			following indentation.
+			following indentation. This works like adding "j" to
+			'formatoptions'.
 :: This is a      gJ      :: This is a multiline     gJ     :: This is a multiline comment. ~
 :: multiline   -------->  :: comment.             --------> ~
 :: comment. ~
