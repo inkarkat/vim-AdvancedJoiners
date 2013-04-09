@@ -2,6 +2,8 @@
 "
 " DEPENDENCIES:
 "   - QueryUnjoin.vim autoload script
+"   - ingo/msg.vim autoload script
+"   - ingoplugin.vim autoload script
 "   - repeat.vim (vimscript #2136) autoload script (optional)
 "   - visualrepeat.vim (vimscript #3848) autoload script (optional)
 "
@@ -12,6 +14,9 @@
 "
 " REVISION	DATE		REMARKS
 "	002	07-Feb-2013	Avoid clobbering the default register.
+"				ENH: Integrate with IndentCommentPrefix.vim
+"				plugin and treat its whitelist prefixes as
+"				comments, too.
 "	001	07-Feb-2013	file creation
 let s:save_cpo = &cpo
 set cpo&vim
@@ -37,12 +42,17 @@ function! s:GetCommentExpressions()
 	" For this buffer, no comment markers are defined. Use any non-word
 	" sequence (but ending with a non-word non-whitespace as to not eat any
 	" trailing whitespace!) as a generalization.
-	return ['\W\*\%(\W\&\S\)']
+	let l:commentExpressions = ['\W\*\%(\W\&\S\)']
     else
 	" Convert each comment marker of the 'comments' setting into a regular
 	" expression.
-	return map(split(&l:comments, '\\\@<!,'), 's:CommentToExpression(v:val)')
+	let l:commentExpressions = map(split(&l:comments, '\\\@<!,'), 's:CommentToExpression(v:val)')
     endif
+
+    " Integration with IndentCommentPrefix.vim plugin.
+    let l:commentExpressions += map(copy(ingoplugin#GetBufferLocalSetting('IndentCommentPrefix_Whitelist', [])), 'escape(v:val, ''\\'')')
+
+    return l:commentExpressions
 endfunction
 function! s:RemoveHyphen()
     if search('\V\w-\%# \s\*\%(\w\|-\)', 'bcnW', line('.'))
@@ -131,10 +141,7 @@ function! AdvancedJoiners#CommentJoin#Join( mode )
 
     redraw
     if l:noCommentCnt > 0
-	echohl WarningMsg
-	let v:warningmsg = (l:joinNum > 1 ? printf('No comment in %d line%s', l:noCommentCnt, (l:noCommentCnt == 1 ? '' : 's')) : 'No comment detected')
-	echomsg v:warningmsg
-	echohl None
+	call ingo#msg#WarningMsg(l:joinNum > 1 ? printf('No comment in %d line%s', l:noCommentCnt, (l:noCommentCnt == 1 ? '' : 's')) : 'No comment detected')
     else
 	echomsg printf('%s%s %d %sline%s',
 	\   (l:isRemoveComments ? 'Joined' : 'Fused'),
