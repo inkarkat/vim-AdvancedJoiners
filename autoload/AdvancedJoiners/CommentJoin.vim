@@ -3,7 +3,7 @@
 " DEPENDENCIES:
 "   - QueryUnjoin.vim autoload script
 "   - ingo/msg.vim autoload script
-"   - ingoplugin.vim autoload script
+"   - ingo/plugin/setting.vim autoload script
 "   - repeat.vim (vimscript #2136) autoload script (optional)
 "   - visualrepeat.vim (vimscript #3848) autoload script (optional)
 "
@@ -13,6 +13,7 @@
 " Maintainer:	Ingo Karkat <ingo@karkat.de>
 "
 " REVISION	DATE		REMARKS
+"	003	10-Apr-2013	Move ingoplugins.vim into ingo-library.
 "	002	07-Feb-2013	Avoid clobbering the default register.
 "				ENH: Integrate with IndentCommentPrefix.vim
 "				plugin and treat its whitelist prefixes as
@@ -50,7 +51,7 @@ function! s:GetCommentExpressions()
     endif
 
     " Integration with IndentCommentPrefix.vim plugin.
-    let l:commentExpressions += map(copy(ingoplugin#GetBufferLocalSetting('IndentCommentPrefix_Whitelist', [])), 'escape(v:val, ''\\'')')
+    let l:commentExpressions += map(copy(ingo#plugin#setting#GetBufferLocal('IndentCommentPrefix_Whitelist', [])), 'escape(v:val, ''\\'')')
 
     return l:commentExpressions
 endfunction
