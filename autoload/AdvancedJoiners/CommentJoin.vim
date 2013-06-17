@@ -13,6 +13,10 @@
 " Maintainer:	Ingo Karkat <ingo@karkat.de>
 "
 " REVISION	DATE		REMARKS
+"	004	30-May-2013	Tweak the gJ fallback pattern when no comment
+"				markers are defined to avoid matching " : in "
+"				:Foobar, so that only the " comment prefix is
+"				removed.
 "	003	10-Apr-2013	Move ingoplugins.vim into ingo-library.
 "	002	07-Feb-2013	Avoid clobbering the default register.
 "				ENH: Integrate with IndentCommentPrefix.vim
@@ -41,9 +45,8 @@ endfunction
 function! s:GetCommentExpressions()
     if empty(&l:comments)
 	" For this buffer, no comment markers are defined. Use any non-word
-	" sequence (but ending with a non-word non-whitespace as to not eat any
-	" trailing whitespace!) as a generalization.
-	let l:commentExpressions = ['\W\*\%(\W\&\S\)']
+	" non-whitespace sequence as a generalization.
+	let l:commentExpressions = ['\%(\W\&\S\)\+']
     else
 	" Convert each comment marker of the 'comments' setting into a regular
 	" expression.
