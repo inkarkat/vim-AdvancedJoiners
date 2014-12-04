@@ -5,12 +5,14 @@
 "   - repeat.vim (vimscript #2136) autoload script (optional)
 "   - visualrepeat.vim (vimscript #3848) autoload script (optional)
 "
-" Copyright: (C) 2005-2013 Ingo Karkat
+" Copyright: (C) 2005-2014 Ingo Karkat
 "   The VIM LICENSE applies to this script; see ':help copyright'.
 "
 " Maintainer:	Ingo Karkat <ingo@karkat.de>
 "
 " REVISION	DATE		REMARKS
+"	003	30-May-2014	Also handle unjoin with zero-width pattern, e.g.
+"				"<Bar>\zs".
 "	002	07-Feb-2013	Avoid clobbering the default register.
 "	001	07-Feb-2013	file creation
 
@@ -26,14 +28,27 @@ function! s:UnjoinLine( separator )
     " match for a one-character match), while setting mark ' at the previous
     " (i.e. end-of-match) position. Then we delete from the current position
     " (beginning of match) to mark ', which removes everything but the final
-    " character, which is finally replaces with the 's' command.
+    " character, which is finally replaced with the 's' command.
     while search(a:separator, 'ceW', line('.'))
 	" In case of a single-character match, the cursor position doesn't
 	" change, and search(..., 's') doesn't set the ' mark. So we have to
 	" make sure it is set.
 	normal! m'
 	call search(a:separator, 'cbsW', line('.'))
-	execute "normal! \"_dg`'s\<CR>\<Esc>"
+	if getpos('.') == getpos("''")
+	    " Either this was a one-character match, or a zero-character match
+	    " (possible when unjoining with a pattern ending in \zs), or
+	    " something went wrong. To differentiate between the two, try to
+	    " match the separator in the current line.
+	    if empty(matchstr(getline('.'), a:separator))
+		execute "normal! i\<CR>\<Esc>"
+	    else
+		execute "normal! s\<CR>\<Esc>"
+	    endif
+	else
+	    " Replace the separator with a newline.
+	    execute "normal! \"_dg`'s\<CR>\<Esc>"
+	endif
     endwhile
 endfunction
 function! AdvancedJoiners#QueryUnjoin#Unjoin( mode, isQuery )
