@@ -5,16 +5,23 @@
 "   - repeat.vim (vimscript #2136) autoload script (optional)
 "   - visualrepeat.vim (vimscript #3848) autoload script (optional)
 "
-" Copyright: (C) 2005-2013 Ingo Karkat
+" Copyright: (C) 2005-2016 Ingo Karkat
 "   The VIM LICENSE applies to this script; see ':help copyright'.
 "
 " Maintainer:	Ingo Karkat <ingo@karkat.de>
 "
 " REVISION	DATE		REMARKS
+"	003	23-Dec-2016	ENH: Add a:isKeepIndent argument to
+"				AdvancedJoiners#QueryJoin#Join(), in order to
+"				support new <Leader>gJ variant.
+"				BUG: <Leader>J with indented "  )" line eats the
+"				parenthesis. Need to use gJ, so that indent is
+"				kept, and ciw can work on that.
 "	002	07-Feb-2013	Avoid clobbering the default register.
 "	001	07-Feb-2013	file creation
 
-function! AdvancedJoiners#QueryJoin#Join( mode, isQuery )
+function! AdvancedJoiners#QueryJoin#Join( isKeepIndent, mode, isQuery )
+    let l:joinCommand = (a:isKeepIndent ? 'gJi' : 'gJ"_ciw')
     let l:joinNum = (a:mode ==# 'v' ? line("'>") - line("'<") : v:count)
 
     if a:isQuery
@@ -22,7 +29,7 @@ function! AdvancedJoiners#QueryJoin#Join( mode, isQuery )
     endif
     for i in range(AdvancedJoiners#RepeatFromMode(a:mode) - (a:mode == 'v' ? 1 : 0)) " The last line isn't joined in visual mode.
 	let l:bufferTick = b:changedtick
-	    execute 'normal! J"_ciw' . s:QueryJoin_separator . "\<Esc>"
+	    execute 'normal!' l:joinCommand . s:QueryJoin_separator . "\<Esc>"
 	if b:changedtick == l:bufferTick
 	    " The join failed (because there are no more lines in the buffer).
 	    " Abort to avoid a cascade of error beeps.
