@@ -31,6 +31,13 @@ RELATED WORKS								     *
 ==============================================================================
 USAGE						       *AdvancedJoiners-usage*
 
+								 *:JoinFolded*
+:[range]JoinFolded[!] [{separator}]
+			Join all folded lines into a single long line
+			separated by a space (or passed {separator}).
+			With [!] the join does not insert or delete any
+			spaces.
+
 									   *J*
 [count]J		For me, this means "execute J [count] times", not the
 			default "Join [count] lines", which joins one line
@@ -75,7 +82,7 @@ To uninstall, use the |:RmVimball| command.
 DEPENDENCIES					*AdvancedJoiners-dependencies*
 
 - Requires Vim 7.0 or higher.
-- Requires the |ingo-library.vim| plugin (vimscript #4433), version 1.005 or
+- Requires the |ingo-library.vim| plugin (vimscript #4433), version 1.020 or
   higher.
 
 ==============================================================================
@@ -111,7 +118,7 @@ First published version.
 Started development.
 
 ==============================================================================
-Copyright: (C) 2005-2013 Ingo Karkat
+Copyright: (C) 2005-2014 Ingo Karkat
 The VIM LICENSE applies to this plugin; see |copyright|.
 
 Maintainer:	Ingo Karkat <ingo@karkat.de>
