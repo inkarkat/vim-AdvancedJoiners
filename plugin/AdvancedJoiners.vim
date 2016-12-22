@@ -1,16 +1,20 @@
 " AdvancedJoiners.vim: More ways to (un-)join lines.
 "
 " DEPENDENCIES:
+"   - ingo/cmdargs.vim autoload script
+"   - ingo/err.vim autoload script
 "   - AdvancedJoiners/CommentJoin.vim autoload script
+"   - AdvancedJoiners/Folds.vim autoload script
 "   - AdvancedJoiners/QueryJoin.vim autoload script
 "   - AdvancedJoiners/QueryUnjoin.vim autoload script
 "
-" Copyright: (C) 2005-2013 Ingo Karkat
+" Copyright: (C) 2005-2014 Ingo Karkat
 "   The VIM LICENSE applies to this script; see ':help copyright'.
 "
 " Maintainer:	Ingo Karkat <ingo@karkat.de>
 "
 " REVISION	DATE		REMARKS
+"	002	08-Jun-2014	Move in :JoinFolded from ingocommands.vim.
 "	001	07-Feb-2013	file creation
 
 " Avoid installing twice or when in unsupported Vim version.
@@ -18,6 +22,13 @@ if exists('g:loaded_AdvancedJoiners') || (v:version < 700)
     finish
 endif
 let g:loaded_AdvancedJoiners = 1
+
+"- commands --------------------------------------------------------------------
+
+command! -bang -range=% -nargs=? JoinFolded call setline(<line1>, getline(<line1>)) | if ! AdvancedJoiners#Folds#Join(<bang>0, <line1>, <line2>, ingo#cmdargs#GetStringExpr(<q-args>)) | echoerr ingo#err#Get() | endif
+
+
+"- mappings --------------------------------------------------------------------
 
 nnoremap <silent> <Plug>(ActionCountedJoin) :<C-u>execute 'normal!' (v:count1 + 1) . 'J'<CR>
 if ! hasmapto('<Plug>(ActionCountedJoin)', 'n')
