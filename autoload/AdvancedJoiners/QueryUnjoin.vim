@@ -11,6 +11,10 @@
 " Maintainer:	Ingo Karkat <ingo@karkat.de>
 "
 " REVISION	DATE		REMARKS
+"	004	05-Dec-2014	BUG: Endless loop when <Leader>uj with separator
+"				<Space> on indented file with "dosbatch"
+"				filetype. Temporarily :set paste to disable
+"				'formatoptions' and indenting.
 "	003	30-May-2014	Also handle unjoin with zero-width pattern, e.g.
 "				"<Bar>\zs".
 "	002	07-Feb-2013	Avoid clobbering the default register.
@@ -35,20 +39,30 @@ function! s:UnjoinLine( separator )
 	" make sure it is set.
 	normal! m'
 	call search(a:separator, 'cbsW', line('.'))
-	if getpos('.') == getpos("''")
-	    " Either this was a one-character match, or a zero-character match
-	    " (possible when unjoining with a pattern ending in \zs), or
-	    " something went wrong. To differentiate between the two, try to
-	    " match the separator in the current line.
-	    if empty(matchstr(getline('.'), a:separator))
-		execute "normal! i\<CR>\<Esc>"
+
+	" To avoid interference of 'formatoptions' and indenting, temporarily
+	" turn that off by :set paste. Otherwise, we might even go into an
+	" endless loop (when indenting adds whitespace and unjoining on that).
+	let l:save_paste = &paste
+	set paste
+	try
+	    if getpos('.') == getpos("''")
+		" Either this was a one-character match, or a zero-character
+		" match (possible when unjoining with a pattern ending in \zs),
+		" or something went wrong. To differentiate between the two, try
+		" to match the separator in the current line.
+		if empty(matchstr(getline('.'), a:separator))
+		    execute "normal! i\<CR>\<Esc>"
+		else
+		    execute "normal! s\<CR>\<Esc>"
+		endif
 	    else
-		execute "normal! s\<CR>\<Esc>"
+		" Replace the separator with a newline.
+		execute "normal! \"_dg`'s\<CR>\<Esc>"
 	    endif
-	else
-	    " Replace the separator with a newline.
-	    execute "normal! \"_dg`'s\<CR>\<Esc>"
-	endif
+	finally
+	    let &paste = l:save_paste
+	endtry
     endwhile
 endfunction
 function! AdvancedJoiners#QueryUnjoin#Unjoin( mode, isQuery )
