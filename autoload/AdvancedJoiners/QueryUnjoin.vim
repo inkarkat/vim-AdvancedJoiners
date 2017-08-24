@@ -25,42 +25,52 @@
 " indenting. Indenting after-the-fact with = isn't guaranteed to be the same
 " (e.g. for 'autoindent'), so we do the replacement step by step manually.
 function! s:UnjoinLine( separator )
-    " Start from the beginning of the line.
-    normal! 0
+    if ! ingo#option#ContainsOneOf(&virtualedit, ['all', 'onemore'])
+	let l:save_virtualedit = &virtualedit
+	set virtualedit=onemore " Otherwise, when joining with an empty line, the cursor is one cell left of where we need it.
+    endif
+    try
+	" Start from the beginning of the line.
+	normal! 0
 
-    " To select the entire search pattern, we first go to the end of the match,
-    " then search backward to the beginning of the match (accepting at-cursor
-    " match for a one-character match), while setting mark ' at the previous
-    " (i.e. end-of-match) position. Then we delete from the current position
-    " (beginning of match) to mark ', which removes everything but the final
-    " character, which is finally replaced with the 's' command.
-    while search(a:separator, 'ceW', line('.'))
-	" In case of a single-character match, the cursor position doesn't
-	" change, and search(..., 's') doesn't set the ' mark. So we have to
-	" make sure it is set.
-	normal! m'
-	call search(a:separator, 'cbsW', line('.'))
-	if getpos('.') == getpos("''")
-	    " Either this was a one-character match, or a zero-character match
-	    " (possible when unjoining with a pattern ending in \zs), or
-	    " something went wrong. To differentiate between the two, try to
-	    " match the separator in the current line.
-	    if empty(matchstr(getline('.'), a:separator))
-		execute "normal! i\<CR>\<Esc>"
+	" To select the entire search pattern, we first go to the end of the match,
+	" then search backward to the beginning of the match (accepting at-cursor
+	" match for a one-character match), while setting mark ' at the previous
+	" (i.e. end-of-match) position. Then we delete from the current position
+	" (beginning of match) to mark ', which removes everything but the final
+	" character, which is finally replaced with the 's' command.
+	while search(a:separator, 'ceW', line('.'))
+	    " In case of a single-character match, the cursor position doesn't
+	    " change, and search(..., 's') doesn't set the ' mark. So we have to
+	    " make sure it is set.
+	    normal! m'
+	    call search(a:separator, 'cbsW', line('.'))
+	    if getpos('.') == getpos("''")
+		" Either this was a one-character match, or a zero-character match
+		" (possible when unjoining with a pattern ending in \zs), or
+		" something went wrong. To differentiate between the two, try to
+		" match the separator in the current line.
+		if empty(matchstr(getline('.'), a:separator))
+		    execute "normal! i\<CR>\<Esc>"
+		else
+		    execute "normal! s\<CR>\<Esc>"
+		endif
 	    else
-		execute "normal! s\<CR>\<Esc>"
+		" Replace the separator with a newline.
+		execute "normal! \"_dg`'s\<CR>\<Esc>"
 	    endif
-	else
-	    " Replace the separator with a newline.
-	    execute "normal! \"_dg`'s\<CR>\<Esc>"
-	endif
 
-	if getline(line('.') - 1) =~# '^\s\+$'
-	    let l:save_cursor = ingo#compat#getcurpos()
-		-1normal! 0"_D
-	    call setpos('.', l:save_cursor)
+	    if getline(line('.') - 1) =~# '^\s\+$'
+		let l:save_cursor = ingo#compat#getcurpos()
+		    -1normal! 0"_D
+		call setpos('.', l:save_cursor)
+	    endif
+	endwhile
+    finally
+	if exists('l:save_virtualedit')
+	    let &virtualedit = l:save_virtualedit
 	endif
-    endwhile
+    endtry
 endfunction
 function! AdvancedJoiners#QueryUnjoin#Unjoin( mode, isQuery )
     let l:startLnum = line('.')
