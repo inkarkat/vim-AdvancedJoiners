@@ -1,11 +1,11 @@
 " AdvancedJoiners/QueryUnjoin.vim: Unjoin by queried pattern.
 "
 " DEPENDENCIES:
-"   - QueryUnjoin.vim autoload script
+"   - AdvancedJoiners.vim autoload script
 "   - repeat.vim (vimscript #2136) autoload script (optional)
 "   - visualrepeat.vim (vimscript #3848) autoload script (optional)
 "
-" Copyright: (C) 2005-2014 Ingo Karkat
+" Copyright: (C) 2005-2017 Ingo Karkat
 "   The VIM LICENSE applies to this script; see ':help copyright'.
 "
 " Maintainer:	Ingo Karkat <ingo@karkat.de>
@@ -44,7 +44,7 @@ function! s:UnjoinLine( separator )
 	" turn that off by :set paste. Otherwise, we might even go into an
 	" endless loop (when indenting adds whitespace and unjoining on that).
 	let l:save_paste = &paste
-	set paste
+	" set paste
 	try
 	    if getpos('.') == getpos("''")
 		" Either this was a one-character match, or a zero-character
