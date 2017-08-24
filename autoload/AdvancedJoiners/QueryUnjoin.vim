@@ -11,6 +11,7 @@
 " Maintainer:	Ingo Karkat <ingo@karkat.de>
 "
 " REVISION	DATE		REMARKS
+"	005	25-Aug-2017	Revert previous change, it breaks indenting.
 "	004	05-Dec-2014	BUG: Endless loop when <Leader>uj with separator
 "				<Space> on indented file with "dosbatch"
 "				filetype. Temporarily :set paste to disable
@@ -39,30 +40,26 @@ function! s:UnjoinLine( separator )
 	" make sure it is set.
 	normal! m'
 	call search(a:separator, 'cbsW', line('.'))
-
-	" To avoid interference of 'formatoptions' and indenting, temporarily
-	" turn that off by :set paste. Otherwise, we might even go into an
-	" endless loop (when indenting adds whitespace and unjoining on that).
-	let l:save_paste = &paste
-	" set paste
-	try
-	    if getpos('.') == getpos("''")
-		" Either this was a one-character match, or a zero-character
-		" match (possible when unjoining with a pattern ending in \zs),
-		" or something went wrong. To differentiate between the two, try
-		" to match the separator in the current line.
-		if empty(matchstr(getline('.'), a:separator))
-		    execute "normal! i\<CR>\<Esc>"
-		else
-		    execute "normal! s\<CR>\<Esc>"
-		endif
+	if getpos('.') == getpos("''")
+	    " Either this was a one-character match, or a zero-character match
+	    " (possible when unjoining with a pattern ending in \zs), or
+	    " something went wrong. To differentiate between the two, try to
+	    " match the separator in the current line.
+	    if empty(matchstr(getline('.'), a:separator))
+		execute "normal! i\<CR>\<Esc>"
 	    else
-		" Replace the separator with a newline.
-		execute "normal! \"_dg`'s\<CR>\<Esc>"
+		execute "normal! s\<CR>\<Esc>"
 	    endif
-	finally
-	    let &paste = l:save_paste
-	endtry
+	else
+	    " Replace the separator with a newline.
+	    execute "normal! \"_dg`'s\<CR>\<Esc>"
+	endif
+
+	if getline(line('.') - 1) =~# '^\s\+$'
+	    let l:save_cursor = ingo#compat#getcurpos()
+		-1normal! 0"_D
+	    call setpos('.', l:save_cursor)
+	endif
     endwhile
 endfunction
 function! AdvancedJoiners#QueryUnjoin#Unjoin( mode, isQuery )
