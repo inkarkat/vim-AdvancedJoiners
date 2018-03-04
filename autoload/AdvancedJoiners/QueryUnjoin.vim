@@ -12,6 +12,13 @@
 "
 " REVISION	DATE		REMARKS
 "	005	25-Aug-2017	Revert previous change, it breaks indenting.
+"				Instead, we need to temporarily :set
+"				virtualedit=onemore to avoid an endless loop in
+"				that situation.
+"				ENH: Delete indent from indent-only lines.
+"				Add check for endless recursion which can be
+"				caused by the auto-insertion of a comment
+"				leader.
 "	004	05-Dec-2014	BUG: Endless loop when <Leader>uj with separator
 "				<Space> on indented file with "dosbatch"
 "				filetype. Temporarily :set paste to disable
@@ -30,6 +37,8 @@ function! s:UnjoinLine( separator )
 	set virtualedit=onemore " Otherwise, when joining with an empty line, the cursor is one cell left of where we need it.
     endif
     try
+	let l:remainder = getline('.')
+
 	" Start from the beginning of the line.
 	normal! 0
 
@@ -60,11 +69,15 @@ function! s:UnjoinLine( separator )
 		execute "normal! \"_dg`'s\<CR>\<Esc>"
 	    endif
 
-	    if getline(line('.') - 1) =~# '^\s\+$'
+	    if getline('.') ==# l:remainder
+		break   " Avoid endless recursion when the remainer to be unjoined does not get smaller.
+	    elseif getline(line('.') - 1) =~# '^\s\+$'
+		" Delete indent from indent-only line.
 		let l:save_cursor = ingo#compat#getcurpos()
 		    -1normal! 0"_D
 		call setpos('.', l:save_cursor)
 	    endif
+	    let l:remainder = getline('.')
 	endwhile
     finally
 	if exists('l:save_virtualedit')
