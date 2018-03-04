@@ -8,12 +8,14 @@
 "   - AdvancedJoiners/QueryJoin.vim autoload script
 "   - AdvancedJoiners/QueryUnjoin.vim autoload script
 "
-" Copyright: (C) 2005-2016 Ingo Karkat
+" Copyright: (C) 2005-2018 Ingo Karkat
 "   The VIM LICENSE applies to this script; see ':help copyright'.
 "
 " Maintainer:	Ingo Karkat <ingo@karkat.de>
 "
 " REVISION	DATE		REMARKS
+"	004	05-Mar-2018	Add :Join; it was documented, but not yet
+"                               implemented :-(
 "	003	23-Dec-2016	Rename gJ to gcJ, so that it doesn't override
 "				the built-in gJ any longer.
 "	002	08-Jun-2014	Move in :JoinFolded from ingocommands.vim.
@@ -28,6 +30,7 @@ let g:loaded_AdvancedJoiners = 1
 "- commands --------------------------------------------------------------------
 
 command! -bang -range=% -nargs=? JoinFolded call setline(<line1>, getline(<line1>)) | if ! AdvancedJoiners#Folds#Join(<bang>0, <line1>, <line2>, ingo#cmdargs#GetStringExpr(<q-args>)) | echoerr ingo#err#Get() | endif
+command! -bang -range   -nargs=? Join       call setline(<line1>, getline(<line1>)) | if ! AdvancedJoiners#QueryJoin#JoinCommand(<bang>0, <line1>, <line2>, <q-args>) | echoerr ingo#err#Get() | endif
 
 
 "- mappings --------------------------------------------------------------------
@@ -57,7 +60,7 @@ vnoremap <Plug>(RepeatQueryJoin) :<C-u>call AdvancedJoiners#QueryJoin#Join(0, 'v
 nnoremap <silent> <Plug>(QueryJoin) :<C-u>call setline('.', getline('.'))<Bar>call AdvancedJoiners#QueryJoin#Join(0, 'n', 1)<CR>
 xnoremap <silent> <Plug>(QueryJoin) :<C-u>call setline('.', getline('.'))<Bar>call AdvancedJoiners#QueryJoin#Join(0, 'v', 1)<CR>
 if ! hasmapto('<Plug>(QueryJoin)', 'n')
-    nmap <Leader>J <Plug>(QueryJoin)
+    nmap <Leader>j <Plug>(QueryJoin)
 endif
 if ! hasmapto('<Plug>(QueryJoin)', 'x')
     xmap <Leader>J <Plug>(QueryJoin)
