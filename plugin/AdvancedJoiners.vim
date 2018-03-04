@@ -19,6 +19,10 @@
 "				Adapt <Leader>J / <Leader>uj mappings to what's
 "				documented, and also define (upper-case)
 "				variants for the non-querying repeat mappings.
+"                               Need to pass a:repeatMapping to
+"                               AdvancedJoiners#QueryJoin#Join(), as it is used
+"                               with different a:isKeepIndent values by
+"                               <Leader>j and <Leader>gj.
 "	003	23-Dec-2016	Rename gJ to gcJ, so that it doesn't override
 "				the built-in gJ any longer.
 "	002	08-Jun-2014	Move in :JoinFolded from ingocommands.vim.
@@ -58,10 +62,10 @@ endif
 
 " Repeat not possible in visual mode, as the command would be executed once per
 " line, but the lines are also reduced by the command.
-nnoremap <silent> <Plug>(QueryJoin) :<C-u>call setline('.', getline('.'))<Bar>call AdvancedJoiners#QueryJoin#Join(0, 'n', 1)<CR>
-xnoremap <silent> <Plug>(QueryJoin) :<C-u>call setline('.', getline('.'))<Bar>call AdvancedJoiners#QueryJoin#Join(0, 'v', 1)<CR>
-nnoremap <silent> <Plug>(RepeatQueryJoin) :<C-u>call setline('.', getline('.'))<Bar>call AdvancedJoiners#QueryJoin#Join(0, 'n', 0)<CR>
-vnoremap <silent> <Plug>(RepeatQueryJoin) :<C-u>call setline('.', getline('.'))<Bar>call AdvancedJoiners#QueryJoin#Join(0, 'v', 0)<CR>
+nnoremap <silent> <Plug>(QueryJoin) :<C-u>call setline('.', getline('.'))<Bar>call AdvancedJoiners#QueryJoin#Join(0, 'n', 1, "\<lt>Plug>(RepeatQueryJoin)")<CR>
+vnoremap <silent> <Plug>(QueryJoin) :<C-u>call setline('.', getline('.'))<Bar>call AdvancedJoiners#QueryJoin#Join(0, 'v', 1, "\<lt>Plug>(RepeatQueryJoin)")<CR>
+nnoremap <silent> <Plug>(RepeatQueryJoin) :<C-u>call setline('.', getline('.'))<Bar>call AdvancedJoiners#QueryJoin#Join(0, 'n', 0, "\<lt>Plug>(RepeatQueryJoin)")<CR>
+vnoremap <silent> <Plug>(RepeatQueryJoin) :<C-u>call setline('.', getline('.'))<Bar>call AdvancedJoiners#QueryJoin#Join(0, 'v', 0, "\<lt>Plug>(RepeatQueryJoin)")<CR>
 if ! hasmapto('<Plug>(QueryJoin)', 'n')
     nmap <Leader>j <Plug>(QueryJoin)
 endif
@@ -75,12 +79,10 @@ if ! hasmapto('<Plug>(RepeatQueryJoin)', 'x')
     xmap <Leader>J <Plug>(RepeatQueryJoin)
 endif
 
-nnoremap <silent> <Plug>(RepeatQueryJoinKeepIndent) :<C-u>call setline('.', getline('.'))<Bar>call AdvancedJoiners#QueryJoin#Join(1, 'n', 0)<CR>
-vnoremap <silent> <Plug>(RepeatQueryJoinKeepIndent) :<C-u>call setline('.', getline('.'))<Bar>call AdvancedJoiners#QueryJoin#Join(1, 'v', 0)<CR>
-" Repeat not possible in visual mode, as the command would be executed once per
-" line, but the lines are also reduced by the command.
-nnoremap <silent> <Plug>(QueryJoinKeepIndent) :<C-u>call setline('.', getline('.'))<Bar>call AdvancedJoiners#QueryJoin#Join(1, 'n', 1)<CR>
-xnoremap <silent> <Plug>(QueryJoinKeepIndent) :<C-u>call setline('.', getline('.'))<Bar>call AdvancedJoiners#QueryJoin#Join(1, 'v', 1)<CR>
+nnoremap <silent> <Plug>(QueryJoinKeepIndent) :<C-u>call setline('.', getline('.'))<Bar>call AdvancedJoiners#QueryJoin#Join(1, 'n', 1, "\<lt>Plug>(RepeatQueryJoinKeepIndent)")<CR>
+vnoremap <silent> <Plug>(QueryJoinKeepIndent) :<C-u>call setline('.', getline('.'))<Bar>call AdvancedJoiners#QueryJoin#Join(1, 'v', 1, "\<lt>Plug>(RepeatQueryJoinKeepIndent)")<CR>
+nnoremap <silent> <Plug>(RepeatQueryJoinKeepIndent) :<C-u>call setline('.', getline('.'))<Bar>call AdvancedJoiners#QueryJoin#Join(1, 'n', 0, "\<lt>Plug>(RepeatQueryJoinKeepIndent)")<CR>
+vnoremap <silent> <Plug>(RepeatQueryJoinKeepIndent) :<C-u>call setline('.', getline('.'))<Bar>call AdvancedJoiners#QueryJoin#Join(1, 'v', 0, "\<lt>Plug>(RepeatQueryJoinKeepIndent)")<CR>
 if ! hasmapto('<Plug>(QueryJoinKeepIndent)', 'n')
     nmap <Leader>gj <Plug>(QueryJoinKeepIndent)
 endif
@@ -95,12 +97,10 @@ if ! hasmapto('<Plug>(RepeatQueryJoinKeepIndent)', 'x')
 endif
 
 
+nnoremap <silent> <Plug>(QueryUnjoin) :<C-u>call setline('.', getline('.'))<Bar>call AdvancedJoiners#QueryUnjoin#Unjoin('n', 1)<CR>
+vnoremap <silent> <Plug>(QueryUnjoin) :<C-u>call setline('.', getline('.'))<Bar>call AdvancedJoiners#QueryUnjoin#Unjoin('v', 1)<CR>
 nnoremap <silent> <Plug>(RepeatQueryUnjoin) :<C-u>call setline('.', getline('.'))<Bar>call AdvancedJoiners#QueryUnjoin#Unjoin('n', 0)<CR>
 vnoremap <silent> <Plug>(RepeatQueryUnjoin) :<C-u>call setline('.', getline('.'))<Bar>call AdvancedJoiners#QueryUnjoin#Unjoin('v', 0)<CR>
-" Repeat not possible in visual mode, as the command would be executed once per
-" line, but the lines are also multiplied by the command.
-nnoremap <silent> <Plug>(QueryUnjoin) :<C-u>call setline('.', getline('.'))<Bar>call AdvancedJoiners#QueryUnjoin#Unjoin('n', 1)<CR>
-xnoremap <silent> <Plug>(QueryUnjoin) :<C-u>call setline('.', getline('.'))<Bar>call AdvancedJoiners#QueryUnjoin#Unjoin('v', 1)<CR>
 if ! hasmapto('<Plug>(QueryUnjoin)', 'n')
     nmap <Leader>uj <Plug>(QueryUnjoin)
 endif
