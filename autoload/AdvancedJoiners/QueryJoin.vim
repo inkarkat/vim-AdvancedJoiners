@@ -5,12 +5,16 @@
 "   - repeat.vim (vimscript #2136) autoload script (optional)
 "   - visualrepeat.vim (vimscript #3848) autoload script (optional)
 "
-" Copyright: (C) 2005-2016 Ingo Karkat
+" Copyright: (C) 2005-2018 Ingo Karkat
 "   The VIM LICENSE applies to this script; see ':help copyright'.
 "
 " Maintainer:	Ingo Karkat <ingo@karkat.de>
 "
 " REVISION	DATE		REMARKS
+"	004	05-Mar-2018	Split off s:Join() from
+"                               AdvancedJoiners#QueryJoin#Join(). Add
+"                               AdvancedJoiners#QueryJoin#JoinCommand() to
+"                               implement :Join.
 "	003	23-Dec-2016	ENH: Add a:isKeepIndent argument to
 "				AdvancedJoiners#QueryJoin#Join(), in order to
 "				support new <Leader>gJ variant.
@@ -27,19 +31,17 @@
 let s:save_cpo = &cpo
 set cpo&vim
 
-function! AdvancedJoiners#QueryJoin#Join( isKeepIndent, mode, isQuery )
+function! s:Join( isKeepIndent, joinNum, isQuery )
     if a:isKeepIndent && ! ingo#option#ContainsOneOf(&virtualedit, ['all', 'onemore'])
 	let l:save_virtualedit = &virtualedit
 	set virtualedit=onemore " Otherwise, when joining with an empty line, the cursor is one cell left of where we need it.
     endif
 
     try
-	let l:joinNum = (a:mode ==# 'v' ? line("'>") - line("'<") : v:count)
-
 	if a:isQuery
 	    let s:QueryJoin_separator = input('Enter separator string: ')
 	endif
-	for i in range(AdvancedJoiners#RepeatFromMode(a:mode) - (a:mode == 'v' ? 1 : 0)) " The last line isn't joined in visual mode.
+	for i in range(a:joinNum)
 	    " The J command inserts one space in place of the <EOL> unless
 	    " there is trailing white space or the next line starts with a ')'.
 	    " The whitespace will be handed by "ciw", but we need a special case
@@ -57,17 +59,49 @@ function! AdvancedJoiners#QueryJoin#Join( isKeepIndent, mode, isQuery )
 	    if b:changedtick == l:bufferTick
 		" The join failed (because there are no more lines in the buffer).
 		" Abort to avoid a cascade of error beeps.
-		break
+		return 0
 	    endif
 	endfor
 
-	silent! call       repeat#set("\<Plug>(RepeatQueryJoin)", l:joinNum)
-	silent! call visualrepeat#set("\<Plug>(RepeatQueryJoin)", l:joinNum)
+	return 1
     finally
 	if exists('l:save_virtualedit')
 	    let &virtualedit = l:save_virtualedit
 	endif
     endtry
+endfunction
+
+function! AdvancedJoiners#QueryJoin#JoinCommand( isKeepIndent, startLnum, endLnum, separator )
+    let [l:startLnum, l:endLnum] = [ingo#range#NetStart(a:startLnum), ingo#range#NetEnd(a:endLnum)]
+    let l:joinNum = l:endLnum - l:startLnum
+    let l:save_foldenable = &l:foldenable
+    setlocal nofoldenable
+    try
+	execute l:startLnum
+	let s:QueryJoin_separator = a:separator
+
+	if ! s:Join(a:isKeepIndent, l:joinNum, 0)
+	    call ingo#err#Set(printf('Failed to join %d lines', l:joinNum))
+	    return 0
+	endif
+
+	return 1
+    finally
+	let &l:foldenable = l:save_foldenable
+    endtry
+endfunction
+
+function! AdvancedJoiners#QueryJoin#Join( isKeepIndent, mode, isQuery )
+    let l:joinNum = (a:mode ==# 'v' ? line("'>") - line("'<") : v:count)
+    call s:Join(
+    \   a:isKeepIndent,
+    \   AdvancedJoiners#RepeatFromMode(a:mode) - (a:mode == 'v' ? 1 : 0),
+    \   a:isQuery
+    \)
+    " The last line isn't joined in visual mode.
+
+    silent! call       repeat#set("\<Plug>(RepeatQueryJoin)", l:joinNum)
+    silent! call visualrepeat#set("\<Plug>(RepeatQueryJoin)", l:joinNum)
 endfunction
 
 let &cpo = s:save_cpo
