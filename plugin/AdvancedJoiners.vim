@@ -16,6 +16,9 @@
 " REVISION	DATE		REMARKS
 "	004	05-Mar-2018	Add :Join; it was documented, but not yet
 "                               implemented :-(
+"				Adapt <Leader>J / <Leader>uj mappings to what's
+"				documented, and also define (upper-case)
+"				variants for the non-querying repeat mappings.
 "	003	23-Dec-2016	Rename gJ to gcJ, so that it doesn't override
 "				the built-in gJ any longer.
 "	002	08-Jun-2014	Move in :JoinFolded from ingocommands.vim.
@@ -53,35 +56,47 @@ if ! hasmapto('<Plug>(CommentJoin)', 'x')
 endif
 
 
-nnoremap <Plug>(RepeatQueryJoin) :<C-u>call AdvancedJoiners#QueryJoin#Join(0, 'n', 0)<CR>
-vnoremap <Plug>(RepeatQueryJoin) :<C-u>call AdvancedJoiners#QueryJoin#Join(0, 'v', 0)<CR>
 " Repeat not possible in visual mode, as the command would be executed once per
 " line, but the lines are also reduced by the command.
 nnoremap <silent> <Plug>(QueryJoin) :<C-u>call setline('.', getline('.'))<Bar>call AdvancedJoiners#QueryJoin#Join(0, 'n', 1)<CR>
 xnoremap <silent> <Plug>(QueryJoin) :<C-u>call setline('.', getline('.'))<Bar>call AdvancedJoiners#QueryJoin#Join(0, 'v', 1)<CR>
+nnoremap <silent> <Plug>(RepeatQueryJoin) :<C-u>call setline('.', getline('.'))<Bar>call AdvancedJoiners#QueryJoin#Join(0, 'n', 0)<CR>
+vnoremap <silent> <Plug>(RepeatQueryJoin) :<C-u>call setline('.', getline('.'))<Bar>call AdvancedJoiners#QueryJoin#Join(0, 'v', 0)<CR>
 if ! hasmapto('<Plug>(QueryJoin)', 'n')
     nmap <Leader>j <Plug>(QueryJoin)
 endif
 if ! hasmapto('<Plug>(QueryJoin)', 'x')
-    xmap <Leader>J <Plug>(QueryJoin)
+    xmap <Leader>j <Plug>(QueryJoin)
+endif
+if ! hasmapto('<Plug>(RepeatQueryJoin)', 'n')
+    nmap <Leader>J <Plug>(RepeatQueryJoin)
+endif
+if ! hasmapto('<Plug>(RepeatQueryJoin)', 'x')
+    xmap <Leader>J <Plug>(RepeatQueryJoin)
 endif
 
-nnoremap <Plug>(RepeatQueryJoinKeepIndent) :<C-u>call AdvancedJoiners#QueryJoin#Join(1, 'n', 0)<CR>
-vnoremap <Plug>(RepeatQueryJoinKeepIndent) :<C-u>call AdvancedJoiners#QueryJoin#Join(1, 'v', 0)<CR>
+nnoremap <silent> <Plug>(RepeatQueryJoinKeepIndent) :<C-u>call setline('.', getline('.'))<Bar>call AdvancedJoiners#QueryJoin#Join(1, 'n', 0)<CR>
+vnoremap <silent> <Plug>(RepeatQueryJoinKeepIndent) :<C-u>call setline('.', getline('.'))<Bar>call AdvancedJoiners#QueryJoin#Join(1, 'v', 0)<CR>
 " Repeat not possible in visual mode, as the command would be executed once per
 " line, but the lines are also reduced by the command.
 nnoremap <silent> <Plug>(QueryJoinKeepIndent) :<C-u>call setline('.', getline('.'))<Bar>call AdvancedJoiners#QueryJoin#Join(1, 'n', 1)<CR>
 xnoremap <silent> <Plug>(QueryJoinKeepIndent) :<C-u>call setline('.', getline('.'))<Bar>call AdvancedJoiners#QueryJoin#Join(1, 'v', 1)<CR>
 if ! hasmapto('<Plug>(QueryJoinKeepIndent)', 'n')
-    nmap <Leader>gJ <Plug>(QueryJoinKeepIndent)
+    nmap <Leader>gj <Plug>(QueryJoinKeepIndent)
 endif
 if ! hasmapto('<Plug>(QueryJoinKeepIndent)', 'x')
-    xmap <Leader>gJ <Plug>(QueryJoinKeepIndent)
+    xmap <Leader>gj <Plug>(QueryJoinKeepIndent)
+endif
+if ! hasmapto('<Plug>(RepeatQueryJoinKeepIndent)', 'n')
+    nmap <Leader>gJ <Plug>(RepeatQueryJoinKeepIndent)
+endif
+if ! hasmapto('<Plug>(RepeatQueryJoinKeepIndent)', 'x')
+    xmap <Leader>gJ <Plug>(RepeatQueryJoinKeepIndent)
 endif
 
 
-nnoremap <silent> <Plug>(RepeatQueryUnjoin) :<C-u>call AdvancedJoiners#QueryUnjoin#Unjoin('n', 0)<CR>
-vnoremap <silent> <Plug>(RepeatQueryUnjoin) :<C-u>call AdvancedJoiners#QueryUnjoin#Unjoin('v', 0)<CR>
+nnoremap <silent> <Plug>(RepeatQueryUnjoin) :<C-u>call setline('.', getline('.'))<Bar>call AdvancedJoiners#QueryUnjoin#Unjoin('n', 0)<CR>
+vnoremap <silent> <Plug>(RepeatQueryUnjoin) :<C-u>call setline('.', getline('.'))<Bar>call AdvancedJoiners#QueryUnjoin#Unjoin('v', 0)<CR>
 " Repeat not possible in visual mode, as the command would be executed once per
 " line, but the lines are also multiplied by the command.
 nnoremap <silent> <Plug>(QueryUnjoin) :<C-u>call setline('.', getline('.'))<Bar>call AdvancedJoiners#QueryUnjoin#Unjoin('n', 1)<CR>
@@ -91,6 +106,12 @@ if ! hasmapto('<Plug>(QueryUnjoin)', 'n')
 endif
 if ! hasmapto('<Plug>(QueryUnjoin)', 'x')
     xmap <Leader>uj <Plug>(QueryUnjoin)
+endif
+if ! hasmapto('<Plug>(RepeatQueryUnjoin)', 'n')
+    nmap <Leader>uJ <Plug>(RepeatQueryUnjoin)
+endif
+if ! hasmapto('<Plug>(RepeatQueryUnjoin)', 'x')
+    xmap <Leader>uJ <Plug>(RepeatQueryUnjoin)
 endif
 
 " vim: set ts=8 sts=4 sw=4 noexpandtab ff=unix fdm=syntax :
