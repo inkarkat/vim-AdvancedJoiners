@@ -57,20 +57,32 @@ The foo-          gcJ      The foobar can be ta-     gcJ     The foobar can be t
 bar can be ta- -------->         ken off.         --------> ~
       ken off. ~
 
-						     *<Leader>J* *v_<Leader>J*
-[count]<Leader>J
-{Visual}<Leader>J	Query a separator string that is inserted between all
-			joined lines; indent is removed.
-						   *<Leader>gJ* *v_<Leader>gJ*
-[count]<Leader>gJ
-{Visual}<Leader>gJ	Query a separator string that is inserted between all
-			joined lines. Don't remove any spaces, like |gJ|.
+								       *:Join*
+:[range]Join[!] {separator}
+			Join lines in [range] with {separator} in between.
+			With [!] does not remove spaces.
+			   *<Leader>j* *v_<Leader>j* *<Leader>J* *v_<Leader>J*
+[count]<Leader>j	Query a separator string that is inserted between all
+{Visual}<Leader>j	joined lines; indent is removed.
+[count]<Leader>J	Join with the previously queried separator string.
+{Visual}<Leader>J
+		       *<Leader>gj* *v_<Leader>gj* *<Leader>gJ* *v_<Leader>gJ*
+[count]<Leader>gj	Query a separator string that is inserted between all
+{Visual}<Leader>gj	joined lines. Don't remove any spaces, like |gJ|.
+[count]<Leader>gJ	Like above, with the previously queried separator
+{Visual}<Leader>gJ	string.
 
-						   *<Leader>uj* *v_<Leader>uj*
-[count]<Leader>uj
-{Visual}<Leader>uj	Query a separator pattern and un-join [count] lines,
-			i.e. replace each separator match with a <CR> and
+								     *:Unjoin*
+:[range]Unjoin[!] {pattern}
+			Un-join current line / lines in [range] whereever
+			{pattern} matches.
+			With [!] does not indent the added lines.
+		       *<Leader>uj* *v_<Leader>uj* *<Leader>uJ* *v_<Leader>uJ*
+[count]<Leader>uj	Query a separator pattern and un-join [count] lines,
+{Visual}<Leader>uj	i.e. replace each separator match with a <CR> and
 			proper indent.
+[count]<Leader>uJ	Un-join on the previously queried separator pattern.
+{Visual}<Leader>uJ
 
 ==============================================================================
 INSTALLATION					*AdvancedJoiners-installation*
@@ -122,7 +134,7 @@ First published version.
 Started development.
 
 ==============================================================================
-Copyright: (C) 2005-2016 Ingo Karkat
+Copyright: (C) 2005-2017 Ingo Karkat
 The VIM LICENSE applies to this plugin; see |copyright|.
 
 Maintainer:	Ingo Karkat <ingo@karkat.de>
