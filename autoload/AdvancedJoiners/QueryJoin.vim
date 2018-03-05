@@ -11,6 +11,9 @@
 " Maintainer:	Ingo Karkat <ingo@karkat.de>
 "
 " REVISION	DATE		REMARKS
+"	005	06-Mar-2018	Define default s:QueryJoin_separator so that
+"                               <Leader>[g]J can be used without a previous
+"                               <Leader>[g]j.
 "	004	05-Mar-2018	Split off s:Join() from
 "                               AdvancedJoiners#QueryJoin#Join(). Add
 "                               AdvancedJoiners#QueryJoin#JoinCommand() to
@@ -35,6 +38,7 @@
 let s:save_cpo = &cpo
 set cpo&vim
 
+let s:QueryJoin_separator = ''
 function! s:Join( isKeepIndent, joinNum, isQuery )
     if a:isKeepIndent && ! ingo#option#ContainsOneOf(&virtualedit, ['all', 'onemore'])
 	let l:save_virtualedit = &virtualedit
