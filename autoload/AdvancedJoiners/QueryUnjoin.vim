@@ -5,12 +5,14 @@
 "   - repeat.vim (vimscript #2136) autoload script (optional)
 "   - visualrepeat.vim (vimscript #3848) autoload script (optional)
 "
-" Copyright: (C) 2005-2017 Ingo Karkat
+" Copyright: (C) 2005-2018 Ingo Karkat
 "   The VIM LICENSE applies to this script; see ':help copyright'.
 "
 " Maintainer:	Ingo Karkat <ingo@karkat.de>
 "
 " REVISION	DATE		REMARKS
+"	006	05-Mar-2018	Align Plug-mapping names and consistently prefix
+"				with AdvancedJoiners.
 "	005	25-Aug-2017	Revert previous change, it breaks indenting.
 "				Instead, we need to temporarily :set
 "				virtualedit=onemore to avoid an endless loop in
@@ -111,8 +113,8 @@ function! AdvancedJoiners#QueryUnjoin#Unjoin( mode, isQuery )
     call setpos("'[", [0, l:startLnum, 1, 0])
     call setpos("']", [0, line('.'), 0x7FFFFFFF, 0])
 
-    silent! call       repeat#set("\<Plug>(RepeatQueryUnjoin)", l:unjoinNum)
-    silent! call visualrepeat#set("\<Plug>(RepeatQueryUnjoin)", l:unjoinNum)
+    silent! call       repeat#set("\<Plug>(AdvancedJoinersUnjoinRepeat)", l:unjoinNum)
+    silent! call visualrepeat#set("\<Plug>(AdvancedJoinersUnjoinRepeat)", l:unjoinNum)
 endfunction
 
 " vim: set ts=8 sts=4 sw=4 noexpandtab ff=unix fdm=syntax :
