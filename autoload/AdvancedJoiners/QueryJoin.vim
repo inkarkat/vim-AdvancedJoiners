@@ -15,6 +15,10 @@
 "                               AdvancedJoiners#QueryJoin#Join(). Add
 "                               AdvancedJoiners#QueryJoin#JoinCommand() to
 "                               implement :Join.
+"                               Need to pass a:repeatMapping to
+"                               AdvancedJoiners#QueryJoin#Join(), as it is used
+"                               with different a:isKeepIndent values by
+"                               <Leader>j and <Leader>gj.
 "	003	23-Dec-2016	ENH: Add a:isKeepIndent argument to
 "				AdvancedJoiners#QueryJoin#Join(), in order to
 "				support new <Leader>gJ variant.
@@ -91,7 +95,7 @@ function! AdvancedJoiners#QueryJoin#JoinCommand( isKeepIndent, startLnum, endLnu
     endtry
 endfunction
 
-function! AdvancedJoiners#QueryJoin#Join( isKeepIndent, mode, isQuery )
+function! AdvancedJoiners#QueryJoin#Join( isKeepIndent, mode, isQuery, repeatMapping )
     let l:joinNum = (a:mode ==# 'v' ? line("'>") - line("'<") : v:count)
     call s:Join(
     \   a:isKeepIndent,
@@ -100,8 +104,8 @@ function! AdvancedJoiners#QueryJoin#Join( isKeepIndent, mode, isQuery )
     \)
     " The last line isn't joined in visual mode.
 
-    silent! call       repeat#set("\<Plug>(RepeatQueryJoin)", l:joinNum)
-    silent! call visualrepeat#set("\<Plug>(RepeatQueryJoin)", l:joinNum)
+    silent! call       repeat#set(a:repeatMapping, l:joinNum)
+    silent! call visualrepeat#set(a:repeatMapping, l:joinNum)
 endfunction
 
 let &cpo = s:save_cpo
