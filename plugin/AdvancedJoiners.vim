@@ -15,14 +15,16 @@
 "
 " REVISION	DATE		REMARKS
 "	004	05-Mar-2018	Add :Join; it was documented, but not yet
-"                               implemented :-(
+"				implemented :-(
 "				Adapt <Leader>J / <Leader>uj mappings to what's
 "				documented, and also define (upper-case)
 "				variants for the non-querying repeat mappings.
-"                               Need to pass a:repeatMapping to
-"                               AdvancedJoiners#QueryJoin#Join(), as it is used
-"                               with different a:isKeepIndent values by
-"                               <Leader>j and <Leader>gj.
+"				Need to pass a:repeatMapping to
+"				AdvancedJoiners#QueryJoin#Join(), as it is used
+"				with different a:isKeepIndent values by
+"				<Leader>j and <Leader>gj.
+"				Align Plug-mapping names and consistently prefix
+"				with AdvancedJoiners.
 "	003	23-Dec-2016	Rename gJ to gcJ, so that it doesn't override
 "				the built-in gJ any longer.
 "	002	08-Jun-2014	Move in :JoinFolded from ingocommands.vim.
@@ -42,76 +44,72 @@ command! -bang -range   -nargs=? Join       call setline(<line1>, getline(<line1
 
 "- mappings --------------------------------------------------------------------
 
-nnoremap <silent> <Plug>(ActionCountedJoin) :<C-u>execute 'normal!' (v:count1 + 1) . 'J'<CR>
-if ! hasmapto('<Plug>(ActionCountedJoin)', 'n')
-    nmap J <Plug>(ActionCountedJoin)
+nnoremap <silent> <Plug>(AdvancedJoinersActionCounted) :<C-u>execute 'normal!' (v:count1 + 1) . 'J'<CR>
+if ! hasmapto('<Plug>(AdvancedJoinersActionCounted)', 'n')
+    nmap J <Plug>(AdvancedJoinersActionCounted)
 endif
 
 
-nnoremap <silent> <Plug>(CommentJoin) :<C-u>call setline('.', getline('.'))<Bar>call AdvancedJoiners#CommentJoin#Join('n')<CR>
-" Repeat not possible in visual mode, as the command would be executed once per
-" line, but the lines are also reduced by the command.
-vnoremap <silent> <Plug>(CommentJoin) :<C-u>call setline('.', getline('.'))<Bar>call AdvancedJoiners#CommentJoin#Join('v')<CR>
-if ! hasmapto('<Plug>(CommentJoin)', 'n')
-    nmap gcJ <Plug>(CommentJoin)
+nnoremap <silent> <Plug>(AdvancedJoinersComment) :<C-u>call setline('.', getline('.'))<Bar>call AdvancedJoiners#CommentJoin#Join('n')<CR>
+vnoremap <silent> <Plug>(AdvancedJoinersComment) :<C-u>call setline('.', getline('.'))<Bar>call AdvancedJoiners#CommentJoin#Join('v')<CR>
+if ! hasmapto('<Plug>(AdvancedJoinersComment)', 'n')
+    nmap gcJ <Plug>(AdvancedJoinersComment)
 endif
-if ! hasmapto('<Plug>(CommentJoin)', 'x')
-    xmap gcJ <Plug>(CommentJoin)
+if ! hasmapto('<Plug>(AdvancedJoinersComment)', 'x')
+    xmap gcJ <Plug>(AdvancedJoinersComment)
 endif
 
 
-" Repeat not possible in visual mode, as the command would be executed once per
-" line, but the lines are also reduced by the command.
-nnoremap <silent> <Plug>(QueryJoin) :<C-u>call setline('.', getline('.'))<Bar>call AdvancedJoiners#QueryJoin#Join(0, 'n', 1, "\<lt>Plug>(RepeatQueryJoin)")<CR>
-vnoremap <silent> <Plug>(QueryJoin) :<C-u>call setline('.', getline('.'))<Bar>call AdvancedJoiners#QueryJoin#Join(0, 'v', 1, "\<lt>Plug>(RepeatQueryJoin)")<CR>
-nnoremap <silent> <Plug>(RepeatQueryJoin) :<C-u>call setline('.', getline('.'))<Bar>call AdvancedJoiners#QueryJoin#Join(0, 'n', 0, "\<lt>Plug>(RepeatQueryJoin)")<CR>
-vnoremap <silent> <Plug>(RepeatQueryJoin) :<C-u>call setline('.', getline('.'))<Bar>call AdvancedJoiners#QueryJoin#Join(0, 'v', 0, "\<lt>Plug>(RepeatQueryJoin)")<CR>
-if ! hasmapto('<Plug>(QueryJoin)', 'n')
-    nmap <Leader>j <Plug>(QueryJoin)
+nnoremap <silent> <Plug>(AdvancedJoinersQuery)  :<C-u>call setline('.', getline('.'))<Bar>call AdvancedJoiners#QueryJoin#Join(0, 'n', 1, "\<lt>Plug>(AdvancedJoinersRepeat)")<CR>
+vnoremap <silent> <Plug>(AdvancedJoinersQuery)  :<C-u>call setline('.', getline('.'))<Bar>call AdvancedJoiners#QueryJoin#Join(0, 'v', 1, "\<lt>Plug>(AdvancedJoinersRepeat)")<CR>
+nnoremap <silent> <Plug>(AdvancedJoinersRepeat) :<C-u>call setline('.', getline('.'))<Bar>call AdvancedJoiners#QueryJoin#Join(0, 'n', 0, "\<lt>Plug>(AdvancedJoinersRepeat)")<CR>
+vnoremap <silent> <Plug>(AdvancedJoinersRepeat) :<C-u>call setline('.', getline('.'))<Bar>call AdvancedJoiners#QueryJoin#Join(0, 'v', 0, "\<lt>Plug>(AdvancedJoinersRepeat)")<CR>
+if ! hasmapto('<Plug>(AdvancedJoinersQuery)', 'n')
+    nmap <Leader>j <Plug>(AdvancedJoinersQuery)
 endif
-if ! hasmapto('<Plug>(QueryJoin)', 'x')
-    xmap <Leader>j <Plug>(QueryJoin)
+if ! hasmapto('<Plug>(AdvancedJoinersQuery)', 'x')
+    xmap <Leader>j <Plug>(AdvancedJoinersQuery)
 endif
-if ! hasmapto('<Plug>(RepeatQueryJoin)', 'n')
-    nmap <Leader>J <Plug>(RepeatQueryJoin)
+if ! hasmapto('<Plug>(AdvancedJoinersRepeat)', 'n')
+    nmap <Leader>J <Plug>(AdvancedJoinersRepeat)
 endif
-if ! hasmapto('<Plug>(RepeatQueryJoin)', 'x')
-    xmap <Leader>J <Plug>(RepeatQueryJoin)
+if ! hasmapto('<Plug>(AdvancedJoinersRepeat)', 'x')
+    xmap <Leader>J <Plug>(AdvancedJoinersRepeat)
 endif
 
-nnoremap <silent> <Plug>(QueryJoinKeepIndent) :<C-u>call setline('.', getline('.'))<Bar>call AdvancedJoiners#QueryJoin#Join(1, 'n', 1, "\<lt>Plug>(RepeatQueryJoinKeepIndent)")<CR>
-vnoremap <silent> <Plug>(QueryJoinKeepIndent) :<C-u>call setline('.', getline('.'))<Bar>call AdvancedJoiners#QueryJoin#Join(1, 'v', 1, "\<lt>Plug>(RepeatQueryJoinKeepIndent)")<CR>
-nnoremap <silent> <Plug>(RepeatQueryJoinKeepIndent) :<C-u>call setline('.', getline('.'))<Bar>call AdvancedJoiners#QueryJoin#Join(1, 'n', 0, "\<lt>Plug>(RepeatQueryJoinKeepIndent)")<CR>
-vnoremap <silent> <Plug>(RepeatQueryJoinKeepIndent) :<C-u>call setline('.', getline('.'))<Bar>call AdvancedJoiners#QueryJoin#Join(1, 'v', 0, "\<lt>Plug>(RepeatQueryJoinKeepIndent)")<CR>
-if ! hasmapto('<Plug>(QueryJoinKeepIndent)', 'n')
-    nmap <Leader>gj <Plug>(QueryJoinKeepIndent)
+nnoremap <silent> <Plug>(AdvancedJoinersQueryKeepIndent)  :<C-u>call setline('.', getline('.'))<Bar>call AdvancedJoiners#QueryJoin#Join(1, 'n', 1, "\<lt>Plug>(AdvancedJoinersRepeatKeepIndent)")<CR>
+vnoremap <silent> <Plug>(AdvancedJoinersQueryKeepIndent)  :<C-u>call setline('.', getline('.'))<Bar>call AdvancedJoiners#QueryJoin#Join(1, 'v', 1, "\<lt>Plug>(AdvancedJoinersRepeatKeepIndent)")<CR>
+nnoremap <silent> <Plug>(AdvancedJoinersRepeatKeepIndent) :<C-u>call setline('.', getline('.'))<Bar>call AdvancedJoiners#QueryJoin#Join(1, 'n', 0, "\<lt>Plug>(AdvancedJoinersRepeatKeepIndent)")<CR>
+vnoremap <silent> <Plug>(AdvancedJoinersRepeatKeepIndent) :<C-u>call setline('.', getline('.'))<Bar>call AdvancedJoiners#QueryJoin#Join(1, 'v', 0, "\<lt>Plug>(AdvancedJoinersRepeatKeepIndent)")<CR>
+if ! hasmapto('<Plug>(AdvancedJoinersQueryKeepIndent)', 'n')
+    nmap <Leader>gj <Plug>(AdvancedJoinersQueryKeepIndent)
 endif
-if ! hasmapto('<Plug>(QueryJoinKeepIndent)', 'x')
-    xmap <Leader>gj <Plug>(QueryJoinKeepIndent)
+if ! hasmapto('<Plug>(AdvancedJoinersQueryKeepIndent)', 'x')
+    xmap <Leader>gj <Plug>(AdvancedJoinersQueryKeepIndent)
 endif
-if ! hasmapto('<Plug>(RepeatQueryJoinKeepIndent)', 'n')
-    nmap <Leader>gJ <Plug>(RepeatQueryJoinKeepIndent)
+if ! hasmapto('<Plug>(AdvancedJoinersRepeatKeepIndent)', 'n')
+    nmap <Leader>gJ <Plug>(AdvancedJoinersRepeatKeepIndent)
 endif
-if ! hasmapto('<Plug>(RepeatQueryJoinKeepIndent)', 'x')
-    xmap <Leader>gJ <Plug>(RepeatQueryJoinKeepIndent)
+if ! hasmapto('<Plug>(AdvancedJoinersRepeatKeepIndent)', 'x')
+    xmap <Leader>gJ <Plug>(AdvancedJoinersRepeatKeepIndent)
 endif
 
 
-nnoremap <silent> <Plug>(QueryUnjoin) :<C-u>call setline('.', getline('.'))<Bar>call AdvancedJoiners#QueryUnjoin#Unjoin('n', 1)<CR>
-vnoremap <silent> <Plug>(QueryUnjoin) :<C-u>call setline('.', getline('.'))<Bar>call AdvancedJoiners#QueryUnjoin#Unjoin('v', 1)<CR>
-nnoremap <silent> <Plug>(RepeatQueryUnjoin) :<C-u>call setline('.', getline('.'))<Bar>call AdvancedJoiners#QueryUnjoin#Unjoin('n', 0)<CR>
-vnoremap <silent> <Plug>(RepeatQueryUnjoin) :<C-u>call setline('.', getline('.'))<Bar>call AdvancedJoiners#QueryUnjoin#Unjoin('v', 0)<CR>
-if ! hasmapto('<Plug>(QueryUnjoin)', 'n')
-    nmap <Leader>uj <Plug>(QueryUnjoin)
+nnoremap <silent> <Plug>(AdvancedJoinersUnjoin)       :<C-u>call setline('.', getline('.'))<Bar>call AdvancedJoiners#QueryUnjoin#Unjoin('n', 1)<CR>
+vnoremap <silent> <Plug>(AdvancedJoinersUnjoin)       :<C-u>call setline('.', getline('.'))<Bar>call AdvancedJoiners#QueryUnjoin#Unjoin('v', 1)<CR>
+nnoremap <silent> <Plug>(AdvancedJoinersUnjoinRepeat) :<C-u>call setline('.', getline('.'))<Bar>call AdvancedJoiners#QueryUnjoin#Unjoin('n', 0)<CR>
+vnoremap <silent> <Plug>(AdvancedJoinersUnjoinRepeat) :<C-u>call setline('.', getline('.'))<Bar>call AdvancedJoiners#QueryUnjoin#Unjoin('v', 0)<CR>
+if ! hasmapto('<Plug>(AdvancedJoinersUnjoin)', 'n')
+    nmap <Leader>uj <Plug>(AdvancedJoinersUnjoin)
 endif
-if ! hasmapto('<Plug>(QueryUnjoin)', 'x')
-    xmap <Leader>uj <Plug>(QueryUnjoin)
+if ! hasmapto('<Plug>(AdvancedJoinersUnjoin)', 'x')
+    xmap <Leader>uj <Plug>(AdvancedJoinersUnjoin)
 endif
-if ! hasmapto('<Plug>(RepeatQueryUnjoin)', 'n')
-    nmap <Leader>uJ <Plug>(RepeatQueryUnjoin)
+if ! hasmapto('<Plug>(AdvancedJoinersUnjoinRepeat)', 'n')
+    nmap <Leader>uJ <Plug>(AdvancedJoinersUnjoinRepeat)
 endif
-if ! hasmapto('<Plug>(RepeatQueryUnjoin)', 'x')
-    xmap <Leader>uJ <Plug>(RepeatQueryUnjoin)
+if ! hasmapto('<Plug>(AdvancedJoinersUnjoinRepeat)', 'x')
+    xmap <Leader>uJ <Plug>(AdvancedJoinersUnjoinRepeat)
 endif
 
 " vim: set ts=8 sts=4 sw=4 noexpandtab ff=unix fdm=syntax :
