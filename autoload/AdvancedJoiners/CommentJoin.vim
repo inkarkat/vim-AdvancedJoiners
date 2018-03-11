@@ -17,6 +17,8 @@
 "	006	12-Mar-2018	Refactoring: Extract
 "                               AdvancedJoiners#CommentJoin#WithPattern() from
 "                               AdvancedJoiners#CommentJoin#Join().
+"                               ENH: Add gqJ mapping implementation in
+"                               AdvancedJoiners#CommentJoin#Diff().
 "	005	18-Jun-2013	Move s:GetCommentExpressions() into
 "				ingo-library.
 "	004	30-May-2013	Tweak the gJ fallback pattern when no comment
@@ -131,9 +133,12 @@ function! AdvancedJoiners#CommentJoin#WithPattern( commentPattern, what, repeatM
     silent! call       repeat#set(a:repeatMapping, l:joinNum)
     silent! call visualrepeat#set(a:repeatMapping, l:joinNum)
 endfunction
-function! AdvancedJoiners#CommentJoin#Join( mode )
+function! AdvancedJoiners#CommentJoin#Comments( mode )
     let l:commentPattern = '\%(' . join(ingo#regexp#comments#FromSetting(), '\|') . '\)'
     call AdvancedJoiners#CommentJoin#WithPattern(l:commentPattern, 'comment', "\<Plug>(CommentJoin)", a:mode)
+endfunction
+function! AdvancedJoiners#CommentJoin#Diff( mode )
+    call AdvancedJoiners#CommentJoin#WithPattern('\r\?[+-]\s*', 'diff', "\<Plug>(DiffJoin)", a:mode)
 endfunction
 
 let &cpo = s:save_cpo
