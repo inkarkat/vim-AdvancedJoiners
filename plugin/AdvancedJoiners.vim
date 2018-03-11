@@ -14,6 +14,8 @@
 " Maintainer:	Ingo Karkat <ingo@karkat.de>
 "
 " REVISION	DATE		REMARKS
+"	005	06-Mar-2018	Add gsJ mapping to join without any whitespace
+"                               in between.
 "	004	05-Mar-2018	Add :Join; it was documented, but not yet
 "				implemented :-(
 "				Adapt <Leader>J / <Leader>uj mappings to what's
@@ -57,6 +59,15 @@ if ! hasmapto('<Plug>(AdvancedJoinersComment)', 'n')
 endif
 if ! hasmapto('<Plug>(AdvancedJoinersComment)', 'x')
     xmap gcJ <Plug>(AdvancedJoinersComment)
+endif
+
+nnoremap <silent> <Plug>(AdvancedJoinersNoWhitespace) :<C-u>call setline('.', getline('.'))<Bar>call AdvancedJoiners#QueryJoin#JoinWithSeparator(0, 'n', '', "\<lt>Plug>(AdvancedJoinersNoWhitespace)")<CR>
+vnoremap <silent> <Plug>(AdvancedJoinersNoWhitespace) :<C-u>call setline('.', getline('.'))<Bar>call AdvancedJoiners#QueryJoin#JoinWithSeparator(0, 'v', '', "\<lt>Plug>(AdvancedJoinersNoWhitespace)")<CR>
+if ! hasmapto('<Plug>(AdvancedJoinersNoWhitespace)', 'n')
+    nmap gsJ <Plug>(AdvancedJoinersNoWhitespace)
+endif
+if ! hasmapto('<Plug>(AdvancedJoinersNoWhitespace)', 'x')
+    xmap gsJ <Plug>(AdvancedJoinersNoWhitespace)
 endif
 
 
