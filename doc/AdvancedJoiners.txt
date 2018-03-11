@@ -56,6 +56,9 @@ USAGE						       *AdvancedJoiners-usage*
 The foo-          gcJ      The foobar can be ta-     gcJ     The foobar can be taken off. ~
 bar can be ta- -------->         ken off.         --------> ~
       ken off. ~
+								 *gsJ* *v_gsJ*
+[count]gsJ, {Visual}gsJ	Join lines removing any trailing and leading
+			whitespace completely.
 
 								       *:Join*
 :[range]Join[!] {separator}
@@ -134,7 +137,7 @@ First published version.
 Started development.
 
 ==============================================================================
-Copyright: (C) 2005-2017 Ingo Karkat
+Copyright: (C) 2005-2018 Ingo Karkat
 The VIM LICENSE applies to this plugin; see |copyright|.
 
 Maintainer:	Ingo Karkat <ingo@karkat.de>
