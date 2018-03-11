@@ -4,6 +4,7 @@
 "   - QueryUnjoin.vim autoload script
 "   - ingo/msg.vim autoload script
 "   - ingo/plugin/setting.vim autoload script
+"   - ingo/regexp/comments.vim autoload script
 "   - repeat.vim (vimscript #2136) autoload script (optional)
 "   - visualrepeat.vim (vimscript #3848) autoload script (optional)
 "
@@ -13,6 +14,8 @@
 " Maintainer:	Ingo Karkat <ingo@karkat.de>
 "
 " REVISION	DATE		REMARKS
+"	005	18-Jun-2013	Move s:GetCommentExpressions() into
+"				ingo-library.
 "	004	30-May-2013	Tweak the gJ fallback pattern when no comment
 "				markers are defined to avoid matching " : in "
 "				:Foobar, so that only the " comment prefix is
@@ -26,38 +29,6 @@
 let s:save_cpo = &cpo
 set cpo&vim
 
-function! s:CommentToExpression( comment )
-    let [l:flags, l:comment] = matchlist(a:comment, '\([^:]*\):\(.*\)')[1:2]
-
-    " Mask backslash for "very nomagic" pattern.
-    let l:comment = escape(l:comment, '\')
-
-    " Observe when a blank is required after the comment string, but do not
-    " include it in the match, so that it is preserved during the join.
-    " Illustration: With :setlocal comments=b:#,:>
-    " # This is				>This is
-    " # text.				> specta
-    " Will be joined to			>cular.
-    " # This is text.			Will be joined to
-    "					>This is spectacular.
-    return (l:flags =~# 'b' ? l:comment . '\ze\%(\s\|\$\)': l:comment)
-endfunction
-function! s:GetCommentExpressions()
-    if empty(&l:comments)
-	" For this buffer, no comment markers are defined. Use any non-word
-	" non-whitespace sequence as a generalization.
-	let l:commentExpressions = ['\%(\W\&\S\)\+']
-    else
-	" Convert each comment marker of the 'comments' setting into a regular
-	" expression.
-	let l:commentExpressions = map(split(&l:comments, '\\\@<!,'), 's:CommentToExpression(v:val)')
-    endif
-
-    " Integration with IndentCommentPrefix.vim plugin.
-    let l:commentExpressions += map(copy(ingo#plugin#setting#GetBufferLocal('IndentCommentPrefix_Whitelist', [])), 'escape(v:val, ''\\'')')
-
-    return l:commentExpressions
-endfunction
 function! s:RemoveHyphen()
     if search('\V\w-\%# \s\*\%(\w\|-\)', 'bcnW', line('.'))
 	normal! "_X
@@ -76,7 +47,7 @@ function! s:SubstituteOnceInLine( pattern, replacement, isMoveLeft )
     return 0
 endfunction
 function! AdvancedJoiners#CommentJoin#Join( mode )
-    let l:commentPattern = '\%(' . join(s:GetCommentExpressions(), '\|') . '\)'
+    let l:commentPattern = '\%(' . join(ingo#regexp#comments#FromSetting(), '\|') . '\)'
 
     " If something is joined with an empty line, no whitespace is inserted.
     " Since the cursor is positioned either on the whitespace (if the original
