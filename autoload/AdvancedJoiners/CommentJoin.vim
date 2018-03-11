@@ -8,12 +8,15 @@
 "   - repeat.vim (vimscript #2136) autoload script (optional)
 "   - visualrepeat.vim (vimscript #3848) autoload script (optional)
 "
-" Copyright: (C) 2005-2013 Ingo Karkat
+" Copyright: (C) 2005-2018 Ingo Karkat
 "   The VIM LICENSE applies to this script; see ':help copyright'.
 "
 " Maintainer:	Ingo Karkat <ingo@karkat.de>
 "
 " REVISION	DATE		REMARKS
+"	006	12-Mar-2018	Refactoring: Extract
+"                               AdvancedJoiners#CommentJoin#WithPattern() from
+"                               AdvancedJoiners#CommentJoin#Join().
 "	005	18-Jun-2013	Move s:GetCommentExpressions() into
 "				ingo-library.
 "	004	30-May-2013	Tweak the gJ fallback pattern when no comment
@@ -46,24 +49,22 @@ function! s:SubstituteOnceInLine( pattern, replacement, isMoveLeft )
     endif
     return 0
 endfunction
-function! AdvancedJoiners#CommentJoin#Join( mode )
-    let l:commentPattern = '\%(' . join(ingo#regexp#comments#FromSetting(), '\|') . '\)'
-
+function! AdvancedJoiners#CommentJoin#WithPattern( commentPattern, what, repeatMapping, mode )
     " If something is joined with an empty line, no whitespace is inserted.
     " Since the cursor is positioned either on the whitespace (if the original
     " line did not end with whitespace) or after it, the whitespace before
-    " l:commentPattern is optional, anyway, and handles that case, too.
-    let l:joinedCommentPattern = '\V\%# \?' . l:commentPattern
+    " a:commentPattern is optional, anyway, and handles that case, too.
+    let l:joinedCommentPattern = '\V\%# \?' . a:commentPattern
 
     let l:noCommentCnt = 0
     let l:isRemoveComments = 1
     let l:lineNum = AdvancedJoiners#RepeatFromMode(a:mode)
     let l:joinNum = l:lineNum - (a:mode ==# 'v' ? 1 : 0) " The last line isn't joined in visual mode.
 
-    if ! search('\V\n\s\*' . l:commentPattern, 'cnW', line('.'))
+    if ! search('\V\n\s\*' . a:commentPattern, 'cnW', line('.'))
 	" Note: Search for /\n/ does not match in empty line, so explicitly
 	" search for that corner case.
-	if ! (empty(getline('.')) && search('\V\^\s\*' . l:commentPattern, 'cnW', line('.') + 1))
+	if ! (empty(getline('.')) && search('\V\^\s\*' . a:commentPattern, 'cnW', line('.') + 1))
 	    " The next line does not start with a comment string, so switch to "fuse
 	    " mode" (i.e. joining and removing any whitespace) instead.
 	    let l:joinedCommentPattern = '\V\%(\^\%#\|\%# \s\*\)'
@@ -116,19 +117,23 @@ function! AdvancedJoiners#CommentJoin#Join( mode )
 
     redraw
     if l:noCommentCnt > 0
-	call ingo#msg#WarningMsg(l:joinNum > 1 ? printf('No comment in %d line%s', l:noCommentCnt, (l:noCommentCnt == 1 ? '' : 's')) : 'No comment detected')
+	call ingo#msg#WarningMsg(l:joinNum > 1 ? printf('No %s in %d line%s', a:what, l:noCommentCnt, (l:noCommentCnt == 1 ? '' : 's')) : 'No ' . a:what . ' detected')
     else
 	echomsg printf('%s%s %d %sline%s',
 	\   (l:isRemoveComments ? 'Joined' : 'Fused'),
 	\   (a:mode ==# 'v' ? ' together' : ''),
 	\   l:joinCnt,
-	\   (l:isRemoveComments ? 'comment ' : ''),
+	\   (l:isRemoveComments ? a:what . ' ' : ''),
 	\   (l:joinCnt == 1 ? '' : 's')
 	\)
     endif
 
-    silent! call       repeat#set("\<Plug>(CommentJoin)", l:joinNum)
-    silent! call visualrepeat#set("\<Plug>(CommentJoin)", l:joinNum)
+    silent! call       repeat#set(a:repeatMapping, l:joinNum)
+    silent! call visualrepeat#set(a:repeatMapping, l:joinNum)
+endfunction
+function! AdvancedJoiners#CommentJoin#Join( mode )
+    let l:commentPattern = '\%(' . join(ingo#regexp#comments#FromSetting(), '\|') . '\)'
+    call AdvancedJoiners#CommentJoin#WithPattern(l:commentPattern, 'comment', "\<Plug>(CommentJoin)", a:mode)
 endfunction
 
 let &cpo = s:save_cpo
