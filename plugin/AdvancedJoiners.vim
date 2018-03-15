@@ -3,7 +3,7 @@
 " DEPENDENCIES:
 "   - ingo/cmdargs.vim autoload script
 "   - ingo/err.vim autoload script
-"   - AdvancedJoiners/CommentJoin.vim autoload script
+"   - AdvancedJoiners/Comments.vim autoload script
 "   - AdvancedJoiners/Folds.vim autoload script
 "   - AdvancedJoiners/QueryJoin.vim autoload script
 "   - AdvancedJoiners/QueryUnjoin.vim autoload script
@@ -14,6 +14,7 @@
 " Maintainer:	Ingo Karkat <ingo@karkat.de>
 "
 " REVISION	DATE		REMARKS
+"	006	12-Mar-2018	Add gqJ mapping to join without diff quirks.
 "	005	06-Mar-2018	Add gsJ mapping to join without any whitespace
 "                               in between.
 "	004	05-Mar-2018	Add :Join; it was documented, but not yet
@@ -52,13 +53,22 @@ if ! hasmapto('<Plug>(AdvancedJoinersActionCounted)', 'n')
 endif
 
 
-nnoremap <silent> <Plug>(AdvancedJoinersComment) :<C-u>call setline('.', getline('.'))<Bar>call AdvancedJoiners#CommentJoin#Join('n')<CR>
-vnoremap <silent> <Plug>(AdvancedJoinersComment) :<C-u>call setline('.', getline('.'))<Bar>call AdvancedJoiners#CommentJoin#Join('v')<CR>
+nnoremap <silent> <Plug>(AdvancedJoinersComment) :<C-u>call setline('.', getline('.'))<Bar>call AdvancedJoiners#CommentJoin#Comments('n')<CR>
+vnoremap <silent> <Plug>(AdvancedJoinersComment) :<C-u>call setline('.', getline('.'))<Bar>call AdvancedJoiners#CommentJoin#Comments('v')<CR>
 if ! hasmapto('<Plug>(AdvancedJoinersComment)', 'n')
     nmap gcJ <Plug>(AdvancedJoinersComment)
 endif
 if ! hasmapto('<Plug>(AdvancedJoinersComment)', 'x')
     xmap gcJ <Plug>(AdvancedJoinersComment)
+endif
+
+nnoremap <silent> <Plug>(AdvancedJoinersDiff) :<C-u>call setline('.', getline('.'))<Bar>call AdvancedJoiners#CommentJoin#Diff('n')<CR>
+vnoremap <silent> <Plug>(AdvancedJoinersDiff) :<C-u>call setline('.', getline('.'))<Bar>call AdvancedJoiners#CommentJoin#Diff('v')<CR>
+if ! hasmapto('<Plug>(AdvancedJoinersDiff)', 'n')
+    nmap gqJ <Plug>(AdvancedJoinersDiff)
+endif
+if ! hasmapto('<Plug>(AdvancedJoinersDiff)', 'x')
+    xmap gqJ <Plug>(AdvancedJoinersDiff)
 endif
 
 nnoremap <silent> <Plug>(AdvancedJoinersNoWhitespace) :<C-u>call setline('.', getline('.'))<Bar>call AdvancedJoiners#QueryJoin#JoinWithSeparator(0, 'n', '', "\<lt>Plug>(AdvancedJoinersNoWhitespace)")<CR>
