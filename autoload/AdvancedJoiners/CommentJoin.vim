@@ -14,6 +14,9 @@
 " Maintainer:	Ingo Karkat <ingo@karkat.de>
 "
 " REVISION	DATE		REMARKS
+"	007	16-Mar-2018	BUG: Pattern searches use very nomagic, but
+"                               a:commentPattern is a normal magic pattern; need
+"                               to switch back via \m.
 "	006	12-Mar-2018	Refactoring: Extract
 "                               AdvancedJoiners#CommentJoin#WithPattern() from
 "                               AdvancedJoiners#CommentJoin#Join().
@@ -57,17 +60,17 @@ function! AdvancedJoiners#CommentJoin#WithPattern( commentPattern, what, repeatM
     " Since the cursor is positioned either on the whitespace (if the original
     " line did not end with whitespace) or after it, the whitespace before
     " a:commentPattern is optional, anyway, and handles that case, too.
-    let l:joinedCommentPattern = '\V\%# \?' . a:commentPattern
+    let l:joinedCommentPattern = '\V\%# \?\m' . a:commentPattern
 
     let l:noCommentCnt = 0
     let l:isRemoveComments = 1
     let l:lineNum = AdvancedJoiners#RepeatFromMode(a:mode)
     let l:joinNum = l:lineNum - (a:mode ==# 'v' ? 1 : 0) " The last line isn't joined in visual mode.
 
-    if ! search('\V\n\s\*' . a:commentPattern, 'cnW', line('.'))
+    if ! search('\V\n\s\*\m' . a:commentPattern, 'cnW', line('.'))
 	" Note: Search for /\n/ does not match in empty line, so explicitly
 	" search for that corner case.
-	if ! (empty(getline('.')) && search('\V\^\s\*' . a:commentPattern, 'cnW', line('.') + 1))
+	if ! (empty(getline('.')) && search('\V\^\s\*\m' . a:commentPattern, 'cnW', line('.') + 1))
 	    " The next line does not start with a comment string, so switch to "fuse
 	    " mode" (i.e. joining and removing any whitespace) instead.
 	    let l:joinedCommentPattern = '\V\%(\^\%#\|\%# \s\*\)'
