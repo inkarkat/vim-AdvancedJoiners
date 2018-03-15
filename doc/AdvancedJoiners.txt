@@ -56,6 +56,9 @@ USAGE						       *AdvancedJoiners-usage*
 The foo-          gcJ      The foobar can be ta-     gcJ     The foobar can be taken off. ~
 bar can be ta- -------->         ken off.         --------> ~
       ken off. ~
+								 *gqJ* *v_gqJ*
+[count]gqJ, {Visual}gqJ	Join lines removing any diff quirks (leading + / -,
+			possibly preceded by a ^M) in between.
 								 *gsJ* *v_gsJ*
 [count]gsJ, {Visual}gsJ	Join lines removing any trailing and leading
 			whitespace completely.
