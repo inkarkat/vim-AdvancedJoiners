@@ -19,6 +19,7 @@
 "                               AdvancedJoiners#CommentJoin#Join().
 "                               ENH: Add gqJ mapping implementation in
 "                               AdvancedJoiners#CommentJoin#Diff().
+"                               Prefix repeat mappings with plugin name.
 "	005	18-Jun-2013	Move s:GetCommentExpressions() into
 "				ingo-library.
 "	004	30-May-2013	Tweak the gJ fallback pattern when no comment
@@ -135,10 +136,10 @@ function! AdvancedJoiners#CommentJoin#WithPattern( commentPattern, what, repeatM
 endfunction
 function! AdvancedJoiners#CommentJoin#Comments( mode )
     let l:commentPattern = '\%(' . join(ingo#regexp#comments#FromSetting(), '\|') . '\)'
-    call AdvancedJoiners#CommentJoin#WithPattern(l:commentPattern, 'comment', "\<Plug>(CommentJoin)", a:mode)
+    call AdvancedJoiners#CommentJoin#WithPattern(l:commentPattern, 'comment', "\<Plug>(AdvancedJoinersComment)", a:mode)
 endfunction
 function! AdvancedJoiners#CommentJoin#Diff( mode )
-    call AdvancedJoiners#CommentJoin#WithPattern('\r\?[+-]\s*', 'diff', "\<Plug>(DiffJoin)", a:mode)
+    call AdvancedJoiners#CommentJoin#WithPattern('\r\?[+-]\s*', 'diff', "\<Plug>(AdvancedJoinersDiff)", a:mode)
 endfunction
 
 let &cpo = s:save_cpo
