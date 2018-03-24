@@ -17,6 +17,15 @@
 "	007	16-Mar-2018	BUG: Pattern searches use very nomagic, but
 "                               a:commentPattern is a normal magic pattern; need
 "                               to switch back via \m.
+"                               ENH: Add combination of diff + optional comment
+"                               in
+"                               AdvancedJoiners#CommentJoin#DiffAndOptionalComment().
+"                               ENH: Support a:endOfLinePattern for removing
+"                               optional ^M at the end of the previous line.
+"                               Adapt s:SubstituteOnceInLine() to handle
+"                               a:pattern matching before the cursor position,
+"                               and detect and adapt the final cursor position
+"                               to correct for the removal of that character(s).
 "	006	12-Mar-2018	Refactoring: Extract
 "                               AdvancedJoiners#CommentJoin#WithPattern() from
 "                               AdvancedJoiners#CommentJoin#Join().
@@ -44,23 +53,41 @@ function! s:RemoveHyphen()
     endif
 endfunction
 function! s:SubstituteOnceInLine( pattern, replacement, isMoveLeft )
-    if search(a:pattern, 'cnW', line('.'))
-	let l:save_cursor = getpos('.')
-	if a:isMoveLeft
-	    normal! h
+    let l:save_cursor = getpos('.')
+
+    if ! search(a:pattern, 'cnW', line('.'))
+	" Not on a:pattern; there might be a:endOfLinePattern before use that we
+	" need to match:
+	if search(a:pattern, 'bcW', line('.'))
+	    " Yes, a:endOfLinePattern will be removed, too. Use its start
+	    " position (note: no 'n' flag here!) for the final desired cursor
+	    " position.
+	    let l:desiredCursor = getpos('.')
+	    " Restore the cursor (i.e. emulate the 'n' flag) so that a:pattern
+	    " can match.
+	    call setpos('.', l:save_cursor)
+	    let l:save_cursor = l:desiredCursor
+	else
+	    " No on or after a:pattern.
+	    return 0
 	endif
-	execute 'silent substitute/' . escape(a:pattern, '/') . '/' . escape(a:replacement, '/') . '/e'
-	call setpos('.', l:save_cursor)
-	return 1
     endif
-    return 0
+
+    if a:isMoveLeft
+	normal! h
+    endif
+
+    execute 'silent substitute/' . escape(a:pattern, '/') . '/' . escape(a:replacement, '/') . '/e'
+
+    call setpos('.', l:save_cursor)
+    return 1
 endfunction
-function! AdvancedJoiners#CommentJoin#WithPattern( commentPattern, what, repeatMapping, mode )
+function! AdvancedJoiners#CommentJoin#WithPattern( endOfLinePattern, commentPattern, what, repeatMapping, mode )
     " If something is joined with an empty line, no whitespace is inserted.
     " Since the cursor is positioned either on the whitespace (if the original
     " line did not end with whitespace) or after it, the whitespace before
     " a:commentPattern is optional, anyway, and handles that case, too.
-    let l:joinedCommentPattern = '\V\%# \?\m' . a:commentPattern
+    let l:joinedCommentPattern = a:endOfLinePattern . '\V\%# \?\m' . a:commentPattern
 
     let l:noCommentCnt = 0
     let l:isRemoveComments = 1
@@ -73,7 +100,7 @@ function! AdvancedJoiners#CommentJoin#WithPattern( commentPattern, what, repeatM
 	if ! (empty(getline('.')) && search('\V\^\s\*\m' . a:commentPattern, 'cnW', line('.') + 1))
 	    " The next line does not start with a comment string, so switch to "fuse
 	    " mode" (i.e. joining and removing any whitespace) instead.
-	    let l:joinedCommentPattern = '\V\%(\^\%#\|\%# \s\*\)'
+	    let l:joinedCommentPattern = '\%(^\%#\|' . a:endOfLinePattern . '\%# \s*\)'
 	    let l:isRemoveComments = 0
 	endif
     endif
@@ -139,10 +166,16 @@ function! AdvancedJoiners#CommentJoin#WithPattern( commentPattern, what, repeatM
 endfunction
 function! AdvancedJoiners#CommentJoin#Comments( mode )
     let l:commentPattern = '\%(' . join(ingo#regexp#comments#FromSetting(), '\|') . '\)'
-    call AdvancedJoiners#CommentJoin#WithPattern(l:commentPattern, 'comment', "\<Plug>(AdvancedJoinersComment)", a:mode)
+    call AdvancedJoiners#CommentJoin#WithPattern('', l:commentPattern, 'comment', "\<Plug>(AdvancedJoinersComment)", a:mode)
 endfunction
+let s:diffPattern = '[+-]\s*'
+let s:controlMPattern = '\r\?'
 function! AdvancedJoiners#CommentJoin#Diff( mode )
-    call AdvancedJoiners#CommentJoin#WithPattern('\r\?[+-]\s*', 'diff', "\<Plug>(AdvancedJoinersDiff)", a:mode)
+    call AdvancedJoiners#CommentJoin#WithPattern(s:controlMPattern, s:diffPattern, 'diff', "\<Plug>(AdvancedJoinersDiff)", a:mode)
+endfunction
+function! AdvancedJoiners#CommentJoin#DiffAndOptionalComment( mode )
+    let l:diffAndOptionalCommentPattern = '\%(' . join(map(ingo#regexp#comments#FromSetting(), "s:diffPattern . '\\%(' . v:val . '\\)\\?'"), '\|') . '\)'
+    call AdvancedJoiners#CommentJoin#WithPattern(s:controlMPattern, l:diffAndOptionalCommentPattern, 'diff [+ comment]', "\<Plug>(AdvancedJoinersDiffAndOptionalComment)", a:mode)
 endfunction
 
 let &cpo = s:save_cpo
