@@ -14,6 +14,19 @@
 " Maintainer:	Ingo Karkat <ingo@karkat.de>
 "
 " REVISION	DATE		REMARKS
+"	008	25-Mar-2018	BUG: gqJ fuses = eats all whitespace, whereas it
+"                               should keep one whitespace. Split s:diffPattern
+"                               into s:diffPatternKeepSeparatingWhitespace,
+"                               which is now used for gqJ, and
+"                               s:diffPatternAndWhitespace, which is used by
+"                               gcqJ, as there we need to remove all whitespace
+"                               (and can't use \ze as the comment pattern still
+"                               follows).
+"                               BUG: Making the commentPattern optional by
+"                               appending \? doesn't work well. Instead, add
+"                               another branch with just
+"                               s:diffPatternKeepSeparatingWhitespace (also
+"                               different; see above!) and no commentPattern.
 "	007	16-Mar-2018	BUG: Pattern searches use very nomagic, but
 "                               a:commentPattern is a normal magic pattern; need
 "                               to switch back via \m.
@@ -168,13 +181,20 @@ function! AdvancedJoiners#CommentJoin#Comments( mode )
     let l:commentPattern = '\%(' . join(ingo#regexp#comments#FromSetting(), '\|') . '\)'
     call AdvancedJoiners#CommentJoin#WithPattern('', l:commentPattern, 'comment', "\<Plug>(AdvancedJoinersComment)", a:mode)
 endfunction
-let s:diffPattern = '[+-]\s*'
+let s:diffPatternKeepSeparatingWhitespace = '[+-]\%(\s*\ze\s\)\?'
+let s:diffPatternAndWhitespace = '[+-]\s*'
 let s:controlMPattern = '\r\?'
 function! AdvancedJoiners#CommentJoin#Diff( mode )
-    call AdvancedJoiners#CommentJoin#WithPattern(s:controlMPattern, s:diffPattern, 'diff', "\<Plug>(AdvancedJoinersDiff)", a:mode)
+    call AdvancedJoiners#CommentJoin#WithPattern(s:controlMPattern, s:diffPatternKeepSeparatingWhitespace, 'diff', "\<Plug>(AdvancedJoinersDiff)", a:mode)
 endfunction
 function! AdvancedJoiners#CommentJoin#DiffAndOptionalComment( mode )
-    let l:diffAndOptionalCommentPattern = '\%(' . join(map(ingo#regexp#comments#FromSetting(), "s:diffPattern . '\\%(' . v:val . '\\)\\?'"), '\|') . '\)'
+    let l:diffAndOptionalCommentPattern =
+    \   '\%(' .
+    \       join(
+    \           map(ingo#regexp#comments#FromSetting(), "s:diffPatternAndWhitespace . '\\%(' . v:val . '\\)'") +
+    \           [s:diffPatternKeepSeparatingWhitespace],
+    \           '\|') .
+    \   '\)'
     call AdvancedJoiners#CommentJoin#WithPattern(s:controlMPattern, l:diffAndOptionalCommentPattern, 'diff [+ comment]', "\<Plug>(AdvancedJoinersDiffAndOptionalComment)", a:mode)
 endfunction
 
