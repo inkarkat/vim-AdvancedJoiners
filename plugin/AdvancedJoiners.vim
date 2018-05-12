@@ -14,6 +14,7 @@
 " Maintainer:	Ingo Karkat <ingo@karkat.de>
 "
 " REVISION	DATE		REMARKS
+"	007	16-Mar-2018	ENH: Add combination gcqJ = gcJ + gqJ.
 "	006	12-Mar-2018	Add gqJ mapping to join without diff quirks.
 "	005	06-Mar-2018	Add gsJ mapping to join without any whitespace
 "                               in between.
@@ -69,6 +70,15 @@ if ! hasmapto('<Plug>(AdvancedJoinersDiff)', 'n')
 endif
 if ! hasmapto('<Plug>(AdvancedJoinersDiff)', 'x')
     xmap gqJ <Plug>(AdvancedJoinersDiff)
+endif
+
+nnoremap <silent> <Plug>(AdvancedJoinersDiffAndOptionalComment) :<C-u>call setline('.', getline('.'))<Bar>call AdvancedJoiners#CommentJoin#DiffAndOptionalComment('n')<CR>
+vnoremap <silent> <Plug>(AdvancedJoinersDiffAndOptionalComment) :<C-u>call setline('.', getline('.'))<Bar>call AdvancedJoiners#CommentJoin#DiffAndOptionalComment('v')<CR>
+if ! hasmapto('<Plug>(AdvancedJoinersDiffAndOptionalComment)', 'n')
+    nmap gcqJ <Plug>(AdvancedJoinersDiffAndOptionalComment)
+endif
+if ! hasmapto('<Plug>(AdvancedJoinersDiffAndOptionalComment)', 'x')
+    xmap gcqJ <Plug>(AdvancedJoinersDiffAndOptionalComment)
 endif
 
 nnoremap <silent> <Plug>(AdvancedJoinersNoWhitespace) :<C-u>call setline('.', getline('.'))<Bar>call AdvancedJoiners#QueryJoin#JoinWithSeparator(0, 'n', '', "\<lt>Plug>(AdvancedJoinersNoWhitespace)")<CR>
