@@ -11,6 +11,9 @@
 " Maintainer:	Ingo Karkat <ingo@karkat.de>
 "
 " REVISION	DATE		REMARKS
+"	007	06-Mar-2018	Define default s:QueryUnjoin_separator so that
+"                               <Leader>uJ can be used without a previous
+"                               <Leader>uj.
 "	006	05-Mar-2018	Align Plug-mapping names and consistently prefix
 "				with AdvancedJoiners.
 "	005	25-Aug-2017	Revert previous change, it breaks indenting.
@@ -87,6 +90,7 @@ function! s:UnjoinLine( separator )
 	endif
     endtry
 endfunction
+let s:QueryUnjoin_separator = '\s\+'
 function! AdvancedJoiners#QueryUnjoin#Unjoin( mode, isQuery )
     let l:startLnum = line('.')
     let l:unjoinNum = (a:mode ==# 'v' ? line("'>") - line("'<") + 1 : v:count)
