@@ -59,6 +59,11 @@ bar can be ta- -------->         ken off.         --------> ~
 								 *gqJ* *v_gqJ*
 [count]gqJ, {Visual}gqJ	Join lines removing any diff quirks (leading + / -,
 			possibly preceded by a ^M) in between.
+							       *gcqJ* *v_gcqJ*
+[count]gcqJ, {Visual}gcqJ
+			Join lines removing any diff quirks (leading + / -,
+			possibly preceded by a ^M) and following comment
+			characters and indentation.
 								 *gsJ* *v_gsJ*
 [count]gsJ, {Visual}gsJ	Join lines removing any trailing and leading
 			whitespace completely.
