@@ -14,6 +14,7 @@
 " Maintainer:	Ingo Karkat <ingo@karkat.de>
 "
 " REVISION	DATE		REMARKS
+"	008	13-May-2018	Implement :Unjoin command.
 "	007	16-Mar-2018	ENH: Add combination gcqJ = gcJ + gqJ.
 "	006	12-Mar-2018	Add gqJ mapping to join without diff quirks.
 "	005	06-Mar-2018	Add gsJ mapping to join without any whitespace
@@ -44,6 +45,7 @@ let g:loaded_AdvancedJoiners = 1
 
 command! -bang -range=% -nargs=? JoinFolded call setline(<line1>, getline(<line1>)) | if ! AdvancedJoiners#Folds#Join(<bang>0, <line1>, <line2>, ingo#cmdargs#GetStringExpr(<q-args>)) | echoerr ingo#err#Get() | endif
 command! -bang -range   -nargs=? Join       call setline(<line1>, getline(<line1>)) | if ! AdvancedJoiners#QueryJoin#JoinCommand(<bang>0, <line1>, <line2>, <q-args>) | echoerr ingo#err#Get() | endif
+command! -bang -range   -nargs=? Unjoin     call setline(<line1>, getline(<line1>)) | if ! AdvancedJoiners#QueryUnjoin#UnjoinCommand(<bang>0, <line1>, <line2>, <q-args>) | echoerr ingo#err#Get() | endif
 
 
 "- mappings --------------------------------------------------------------------
