@@ -2,6 +2,10 @@
 "
 " DEPENDENCIES:
 "   - AdvancedJoiners.vim autoload script
+"   - ingo/compat.vim autoload script
+"   - ingo/err.vim autoload script
+"   - ingo/option.vim autoload script
+"   - ingo/range.vim autoload script
 "   - repeat.vim (vimscript #2136) autoload script (optional)
 "   - visualrepeat.vim (vimscript #3848) autoload script (optional)
 "
@@ -11,6 +15,8 @@
 " Maintainer:	Ingo Karkat <ingo@karkat.de>
 "
 " REVISION	DATE		REMARKS
+"	008	13-May-2018	Implement :Unjoin via
+"                               AdvancedJoiners#QueryUnjoin#UnjoinCommand().
 "	007	06-Mar-2018	Define default s:QueryUnjoin_separator so that
 "                               <Leader>uJ can be used without a previous
 "                               <Leader>uj.
@@ -112,13 +118,50 @@ function! AdvancedJoiners#QueryUnjoin#Unjoin( mode, isQuery )
 	call s:UnjoinLine(s:QueryUnjoin_separator)
     endfor
 
-    " The change markers are just around the unjoin. Set them to include all
-    " unjoined lines.
+    " The change markers are just around the last unjoin. Set them to include
+    " all unjoined lines.
     call setpos("'[", [0, l:startLnum, 1, 0])
     call setpos("']", [0, line('.'), 0x7FFFFFFF, 0])
 
     silent! call       repeat#set("\<Plug>(AdvancedJoinersUnjoinRepeat)", l:unjoinNum)
     silent! call visualrepeat#set("\<Plug>(AdvancedJoinersUnjoinRepeat)", l:unjoinNum)
+endfunction
+
+function! AdvancedJoiners#QueryUnjoin#UnjoinCommand( isNoIndentingAndFormatting, startLnum, endLnum, separator )
+    let [l:startLnum, l:endLnum] = [ingo#range#NetStart(a:startLnum), ingo#range#NetEnd(a:endLnum)]
+
+    if ! empty(a:separator)
+	let s:QueryUnjoin_separator = a:separator
+    endif
+
+    if a:isNoIndentingAndFormatting
+	let l:save_paste = &paste
+	set paste
+    endif
+    try
+	for l:i in range(l:endLnum - l:startLnum + 1)
+	    if l:i > 0
+		normal! j
+	    endif
+	    call s:UnjoinLine(s:QueryUnjoin_separator)
+	endfor
+    finally
+	if exists('l:save_paste')
+	    let &paste = l:save_paste
+	endif
+    endtry
+
+    if line('.') == l:endLnum
+	call ingo#err#Set('Nothing unjoined; pattern did not match: ' . s:QueryUnjoin_separator)
+	return 0
+    endif
+
+    " The change markers are just around the last unjoin. Set them to include
+    " all unjoined lines.
+    call setpos("'[", [0, l:startLnum, 1, 0])
+    call setpos("']", [0, line('.'), 0x7FFFFFFF, 0])
+
+    return 1
 endfunction
 
 " vim: set ts=8 sts=4 sw=4 noexpandtab ff=unix fdm=syntax :
