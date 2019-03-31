@@ -84,10 +84,12 @@ bar can be ta- -------->         ken off.         --------> ~
 {Visual}<Leader>gJ	string.
 
 								     *:Unjoin*
-:[range]Unjoin[!] {pattern}
+:[range]Unjoin[!] [{pattern}]
 			Un-join current line / lines in [range] whereever
-			{pattern} matches.
-			With [!] does not indent the added lines.
+			{pattern} (or the previously queried separator
+			pattern of a mapping) matches.
+			With [!] does not indent the added lines, and does not
+			automatically insert the current comment leader.
 		       *<Leader>uj* *v_<Leader>uj* *<Leader>uJ* *v_<Leader>uJ*
 [count]<Leader>uj	Query a separator pattern and un-join [count] lines,
 {Visual}<Leader>uj	i.e. replace each separator match with a <CR> and
