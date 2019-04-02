@@ -9,7 +9,7 @@
 "   - repeat.vim (vimscript #2136) autoload script (optional)
 "   - visualrepeat.vim (vimscript #3848) autoload script (optional)
 "
-" Copyright: (C) 2005-2018 Ingo Karkat
+" Copyright: (C) 2005-2019 Ingo Karkat
 "   The VIM LICENSE applies to this script; see ':help copyright'.
 "
 " Maintainer:	Ingo Karkat <ingo@karkat.de>
@@ -120,8 +120,8 @@ function! AdvancedJoiners#QueryUnjoin#Unjoin( mode, isQuery )
 
     " The change markers are just around the last unjoin. Set them to include
     " all unjoined lines.
-    call setpos("'[", [0, l:startLnum, 1, 0])
-    call setpos("']", [0, line('.'), 0x7FFFFFFF, 0])
+    call setpos("'[", ingo#pos#Make4(l:startLnum, 1))
+    call setpos("']", ingo#pos#Make4(line('.'), 0x7FFFFFFF))
 
     silent! call       repeat#set("\<Plug>(AdvancedJoinersUnjoinRepeat)", l:unjoinNum)
     silent! call visualrepeat#set("\<Plug>(AdvancedJoinersUnjoinRepeat)", l:unjoinNum)
@@ -158,8 +158,8 @@ function! AdvancedJoiners#QueryUnjoin#UnjoinCommand( isNoIndentingAndFormatting,
 
     " The change markers are just around the last unjoin. Set them to include
     " all unjoined lines.
-    call setpos("'[", [0, l:startLnum, 1, 0])
-    call setpos("']", [0, line('.'), 0x7FFFFFFF, 0])
+    call setpos("'[", ingo#pos#Make4(l:startLnum, 1))
+    call setpos("']", ingo#pos#Make4(line('.'), 0x7FFFFFFF))
 
     return 1
 endfunction
