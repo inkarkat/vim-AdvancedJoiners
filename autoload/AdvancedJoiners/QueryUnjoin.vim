@@ -1,11 +1,7 @@
 " AdvancedJoiners/QueryUnjoin.vim: Unjoin by queried pattern.
 "
 " DEPENDENCIES:
-"   - AdvancedJoiners.vim autoload script
-"   - ingo/compat.vim autoload script
-"   - ingo/err.vim autoload script
-"   - ingo/option.vim autoload script
-"   - ingo/range.vim autoload script
+"   - ingo-library.vim plugin
 "   - repeat.vim (vimscript #2136) autoload script (optional)
 "   - visualrepeat.vim (vimscript #3848) autoload script (optional)
 "
@@ -15,6 +11,8 @@
 " Maintainer:	Ingo Karkat <ingo@karkat.de>
 "
 " REVISION	DATE		REMARKS
+"	009	03-Apr-2019	Refactoring: Use ingo#change#Set(). Factor out
+"                               s:SetChange().
 "	008	13-May-2018	Implement :Unjoin via
 "                               AdvancedJoiners#QueryUnjoin#UnjoinCommand().
 "	007	06-Mar-2018	Define default s:QueryUnjoin_separator so that
@@ -118,11 +116,7 @@ function! AdvancedJoiners#QueryUnjoin#Unjoin( mode, isQuery )
 	call s:UnjoinLine(s:QueryUnjoin_separator)
     endfor
 
-    " The change markers are just around the last unjoin. Set them to include
-    " all unjoined lines.
-    call setpos("'[", ingo#pos#Make4(l:startLnum, 1))
-    call setpos("']", ingo#pos#Make4(line('.'), 0x7FFFFFFF))
-
+    call s:SetChange()
     silent! call       repeat#set("\<Plug>(AdvancedJoinersUnjoinRepeat)", l:unjoinNum)
     silent! call visualrepeat#set("\<Plug>(AdvancedJoinersUnjoinRepeat)", l:unjoinNum)
 endfunction
@@ -156,12 +150,15 @@ function! AdvancedJoiners#QueryUnjoin#UnjoinCommand( isNoIndentingAndFormatting,
 	return 0
     endif
 
-    " The change markers are just around the last unjoin. Set them to include
-    " all unjoined lines.
-    call setpos("'[", ingo#pos#Make4(l:startLnum, 1))
-    call setpos("']", ingo#pos#Make4(line('.'), 0x7FFFFFFF))
+    call s:SetChange()
 
     return 1
+endfunction
+
+function! s:SetChange() abort
+    " The change markers are just around the last unjoin. Set them to include
+    " all unjoined lines.
+    call ingo#change#Set([l:startLnum, 1], [line('.'), 0x7FFFFFFF])
 endfunction
 
 " vim: set ts=8 sts=4 sw=4 noexpandtab ff=unix fdm=syntax :
