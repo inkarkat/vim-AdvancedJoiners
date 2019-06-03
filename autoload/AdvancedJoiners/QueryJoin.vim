@@ -5,7 +5,7 @@
 "   - repeat.vim (vimscript #2136) autoload script (optional)
 "   - visualrepeat.vim (vimscript #3848) autoload script (optional)
 "
-" Copyright: (C) 2005-2018 Ingo Karkat
+" Copyright: (C) 2005-2019 Ingo Karkat
 "   The VIM LICENSE applies to this script; see ':help copyright'.
 "
 " Maintainer:	Ingo Karkat <ingo@karkat.de>
@@ -57,7 +57,7 @@ function! s:Join( isKeepIndent, joinNum, separator )
     endif
 
     try
-	for i in range(a:joinNum)
+	for l:i in range(a:joinNum)
 	    " The J command inserts one space in place of the <EOL> unless
 	    " there is trailing white space or the next line starts with a ')'.
 	    " The whitespace will be handed by "ciw", but we need a special case
@@ -108,10 +108,11 @@ function! AdvancedJoiners#QueryJoin#JoinCommand( isKeepIndent, startLnum, endLnu
 endfunction
 
 function! AdvancedJoiners#QueryJoin#JoinWithSeparator( isKeepIndent, mode, separator, repeatMapping )
-    let l:joinNum = (a:mode ==# 'v' ? line("'>") - line("'<") : v:count)
+    let l:isVisualMode = (a:mode ==# 'v')
+    let l:joinNum = (l:isVisualMode ? line("'>") - line("'<") : v:count)
     call s:Join(
     \   a:isKeepIndent,
-    \   AdvancedJoiners#RepeatFromMode(a:mode) - (a:mode == 'v' ? 1 : 0),
+    \   AdvancedJoiners#RepeatFromMode(a:mode) - (l:isVisualMode ? 1 : 0),
     \   a:separator
     \)
     " The last line isn't joined in visual mode.
