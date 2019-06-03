@@ -14,6 +14,11 @@
 "	005	06-Mar-2018	Define default s:QueryJoin_separator so that
 "                               <Leader>[g]J can be used without a previous
 "                               <Leader>[g]j.
+"                               Refactoring: Extract s:GetSeparator() from
+"                               s:Join().
+"                               Refactoring: Split off
+"                               AdvancedJoiners#QueryJoin#JoinWithSeparator()
+"                               and use to implement new gsJ mapping.
 "	004	05-Mar-2018	Split off s:Join() from
 "                               AdvancedJoiners#QueryJoin#Join(). Add
 "                               AdvancedJoiners#QueryJoin#JoinCommand() to
@@ -39,16 +44,19 @@ let s:save_cpo = &cpo
 set cpo&vim
 
 let s:QueryJoin_separator = ''
-function! s:Join( isKeepIndent, joinNum, isQuery )
+function! s:GetSeparator( isQuery )
+    if a:isQuery
+	let s:QueryJoin_separator = input('Enter separator string: ')
+    endif
+    return s:QueryJoin_separator
+endfunction
+function! s:Join( isKeepIndent, joinNum, separator )
     if a:isKeepIndent && ! ingo#option#ContainsOneOf(&virtualedit, ['all', 'onemore'])
 	let l:save_virtualedit = &virtualedit
 	set virtualedit=onemore " Otherwise, when joining with an empty line, the cursor is one cell left of where we need it.
     endif
 
     try
-	if a:isQuery
-	    let s:QueryJoin_separator = input('Enter separator string: ')
-	endif
 	for i in range(a:joinNum)
 	    " The J command inserts one space in place of the <EOL> unless
 	    " there is trailing white space or the next line starts with a ')'.
@@ -63,7 +71,7 @@ function! s:Join( isKeepIndent, joinNum, isQuery )
 	    \)
 
 	    let l:bufferTick = b:changedtick
-		execute 'normal!' l:joinCommand . s:QueryJoin_separator . "\<Esc>"
+		execute 'normal!' l:joinCommand . a:separator . "\<Esc>"
 	    if b:changedtick == l:bufferTick
 		" The join failed (because there are no more lines in the buffer).
 		" Abort to avoid a cascade of error beeps.
@@ -88,7 +96,7 @@ function! AdvancedJoiners#QueryJoin#JoinCommand( isKeepIndent, startLnum, endLnu
 	execute l:startLnum
 	let s:QueryJoin_separator = a:separator
 
-	if ! s:Join(a:isKeepIndent, l:joinNum, 0)
+	if ! s:Join(a:isKeepIndent, l:joinNum, s:GetSeparator(0))
 	    call ingo#err#Set(printf('Failed to join %d lines', l:joinNum))
 	    return 0
 	endif
@@ -99,17 +107,22 @@ function! AdvancedJoiners#QueryJoin#JoinCommand( isKeepIndent, startLnum, endLnu
     endtry
 endfunction
 
-function! AdvancedJoiners#QueryJoin#Join( isKeepIndent, mode, isQuery, repeatMapping )
+function! AdvancedJoiners#QueryJoin#JoinWithSeparator( isKeepIndent, mode, separator, repeatMapping )
     let l:joinNum = (a:mode ==# 'v' ? line("'>") - line("'<") : v:count)
     call s:Join(
     \   a:isKeepIndent,
     \   AdvancedJoiners#RepeatFromMode(a:mode) - (a:mode == 'v' ? 1 : 0),
-    \   a:isQuery
+    \   a:separator
     \)
     " The last line isn't joined in visual mode.
 
     silent! call       repeat#set(a:repeatMapping, l:joinNum)
     silent! call visualrepeat#set(a:repeatMapping, l:joinNum)
+endfunction
+function! AdvancedJoiners#QueryJoin#Join( isKeepIndent, mode, isQuery, repeatMapping )
+    call AdvancedJoiners#QueryJoin#JoinWithSeparator(
+    \   a:isKeepIndent, a:mode, s:GetSeparator(a:isQuery), a:repeatMapping
+    \)
 endfunction
 
 let &cpo = s:save_cpo
