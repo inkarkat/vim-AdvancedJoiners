@@ -8,7 +8,7 @@
 "   - AdvancedJoiners/QueryJoin.vim autoload script
 "   - AdvancedJoiners/QueryUnjoin.vim autoload script
 "
-" Copyright: (C) 2005-2018 Ingo Karkat
+" Copyright: (C) 2005-2019 Ingo Karkat
 "   The VIM LICENSE applies to this script; see ':help copyright'.
 "
 " Maintainer:	Ingo Karkat <ingo@karkat.de>
@@ -18,7 +18,7 @@
 "	007	16-Mar-2018	ENH: Add combination gcqJ = gcJ + gqJ.
 "	006	12-Mar-2018	Add gqJ mapping to join without diff quirks.
 "	005	06-Mar-2018	Add gsJ mapping to join without any whitespace
-"                               in between.
+"				in between.
 "	004	05-Mar-2018	Add :Join; it was documented, but not yet
 "				implemented :-(
 "				Adapt <Leader>J / <Leader>uj mappings to what's
