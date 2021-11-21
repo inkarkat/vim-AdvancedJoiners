@@ -1,0 +1,31 @@
+Some
+unindented
+text
+here
+---
+    Space
+    indent
+    here
+---
+	    Mixed
+	    softtabstop
+	    indent
+	    here
+---
+	    With
+	    empty
+
+	    elements
+
+
+	    now
+---
+	    Also
+
+
+	    whitespace
+
+	    here	
+	    around  
+
+---
