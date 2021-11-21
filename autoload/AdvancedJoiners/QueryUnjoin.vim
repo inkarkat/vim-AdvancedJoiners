@@ -11,6 +11,8 @@
 " Maintainer:	Ingo Karkat <ingo@karkat.de>
 "
 " REVISION	DATE		REMARKS
+"	010	26-May-2019	Regression: Need to pass l:startLnum to new
+"                               s:SetChange().
 "	009	03-Apr-2019	Refactoring: Use ingo#change#Set(). Factor out
 "                               s:SetChange().
 "	008	13-May-2018	Implement :Unjoin via
@@ -116,7 +118,7 @@ function! AdvancedJoiners#QueryUnjoin#Unjoin( mode, isQuery )
 	call s:UnjoinLine(s:QueryUnjoin_separator)
     endfor
 
-    call s:SetChange()
+    call s:SetChange(l:startLnum)
     silent! call       repeat#set("\<Plug>(AdvancedJoinersUnjoinRepeat)", l:unjoinNum)
     silent! call visualrepeat#set("\<Plug>(AdvancedJoinersUnjoinRepeat)", l:unjoinNum)
 endfunction
@@ -150,15 +152,15 @@ function! AdvancedJoiners#QueryUnjoin#UnjoinCommand( isNoIndentingAndFormatting,
 	return 0
     endif
 
-    call s:SetChange()
+    call s:SetChange(l:startLnum)
 
     return 1
 endfunction
 
-function! s:SetChange() abort
+function! s:SetChange( startLnum ) abort
     " The change markers are just around the last unjoin. Set them to include
     " all unjoined lines.
-    call ingo#change#Set([l:startLnum, 1], [line('.'), 0x7FFFFFFF])
+    call ingo#change#Set([a:startLnum, 1], [line('.'), 0x7FFFFFFF])
 endfunction
 
 " vim: set ts=8 sts=4 sw=4 noexpandtab ff=unix fdm=syntax :
