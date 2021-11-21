@@ -30,7 +30,8 @@ RELATED WORKS								     *
 
 ==============================================================================
 USAGE						       *AdvancedJoiners-usage*
-
+									  *dJ*
+["x][count]dJ		Delete the following [count] lines.
 								 *:JoinFolded*
 :[range]JoinFolded[!] [{separator}]
 			Join all folded lines into a single long line
