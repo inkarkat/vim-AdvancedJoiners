@@ -27,6 +27,14 @@
 "                               another branch with just
 "                               s:diffPatternKeepSeparatingWhitespace (also
 "                               different; see above!) and no commentPattern.
+"                               ENH: DWIM: Also remove diff markers from the
+"                               beginning of the first joined line. Make
+"                               AdvancedJoiners#CommentJoin#WithPattern() take
+"                               an optional Funcref and arguments, and invoke
+"                               that after the joining, but before histdel() and
+"                               repeat#set(). Define
+"                               s:RemoveLeadingDiffMarkers() for the special
+"                               action.
 "	007	16-Mar-2018	BUG: Pattern searches use very nomagic, but
 "                               a:commentPattern is a normal magic pattern; need
 "                               to switch back via \m.
@@ -95,7 +103,7 @@ function! s:SubstituteOnceInLine( pattern, replacement, isMoveLeft )
     call setpos('.', l:save_cursor)
     return 1
 endfunction
-function! AdvancedJoiners#CommentJoin#WithPattern( endOfLinePattern, commentPattern, what, repeatMapping, mode )
+function! AdvancedJoiners#CommentJoin#WithPattern( endOfLinePattern, commentPattern, what, repeatMapping, mode, ... )
     " If something is joined with an empty line, no whitespace is inserted.
     " Since the cursor is positioned either on the whitespace (if the original
     " line did not end with whitespace) or after it, the whitespace before
@@ -159,6 +167,7 @@ function! AdvancedJoiners#CommentJoin#WithPattern( endOfLinePattern, commentPatt
 	    let l:noCommentCnt += 1
 	endif
     endfor
+    if a:0 | let l:didSubstitute = call(a:1, a:000[1:]) || l:didSubstitute | endif
     if l:didSubstitute | call histdel('search', -1) | endif " Clean up the search history.
 
     redraw
@@ -184,8 +193,19 @@ endfunction
 let s:diffPatternKeepSeparatingWhitespace = '[+-]\%(\s*\ze\s\)\?'
 let s:diffPatternAndWhitespace = '[+-]\s*'
 let s:controlMPattern = '\r\?'
+function! s:RemoveLeadingDiffMarkers( pattern )
+    let l:save_cursor = getpos('.')
+    execute 'silent substitute/^' . escape(a:pattern, '/') . '//e'
+    silent substitute/\r\s*$//e
+    call setpos('.', l:save_cursor)
+    return 1
+endfunction
 function! AdvancedJoiners#CommentJoin#Diff( mode )
-    call AdvancedJoiners#CommentJoin#WithPattern(s:controlMPattern, s:diffPatternKeepSeparatingWhitespace, 'diff', "\<Plug>(AdvancedJoinersDiff)", a:mode)
+    call AdvancedJoiners#CommentJoin#WithPattern(
+    \   s:controlMPattern, s:diffPatternKeepSeparatingWhitespace,
+    \   'diff', "\<Plug>(AdvancedJoinersDiff)", a:mode,
+    \   function('s:RemoveLeadingDiffMarkers'), s:diffPatternAndWhitespace
+    \)
 endfunction
 function! AdvancedJoiners#CommentJoin#DiffAndOptionalComment( mode )
     let l:diffAndOptionalCommentPattern =
@@ -195,7 +215,11 @@ function! AdvancedJoiners#CommentJoin#DiffAndOptionalComment( mode )
     \           [s:diffPatternKeepSeparatingWhitespace],
     \           '\|') .
     \   '\)'
-    call AdvancedJoiners#CommentJoin#WithPattern(s:controlMPattern, l:diffAndOptionalCommentPattern, 'diff [+ comment]', "\<Plug>(AdvancedJoinersDiffAndOptionalComment)", a:mode)
+    call AdvancedJoiners#CommentJoin#WithPattern(
+    \   s:controlMPattern, l:diffAndOptionalCommentPattern,
+    \   'diff [+ comment]', "\<Plug>(AdvancedJoinersDiffAndOptionalComment)", a:mode,
+    \   function('s:RemoveLeadingDiffMarkers'), l:diffAndOptionalCommentPattern
+    \)
 endfunction
 
 let &cpo = s:save_cpo
