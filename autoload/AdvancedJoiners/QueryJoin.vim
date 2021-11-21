@@ -1,7 +1,7 @@
 " AdvancedJoiners/QueryJoin.vim: Join by queried separator.
 "
 " DEPENDENCIES:
-"   - QueryUnjoin.vim autoload script
+"   - ingo-library.vim plugin
 "   - repeat.vim (vimscript #2136) autoload script (optional)
 "   - visualrepeat.vim (vimscript #3848) autoload script (optional)
 "
@@ -11,6 +11,10 @@
 " Maintainer:	Ingo Karkat <ingo@karkat.de>
 "
 " REVISION	DATE		REMARKS
+"	006	04-Jun-2019	Reimplement s:Join() by delegating to (more
+"                               robust and tested) ingo#join#Range(), which has
+"                               now incorporated some corner cases from this
+"                               implementation.
 "	005	06-Mar-2018	Define default s:QueryJoin_separator so that
 "                               <Leader>[g]J can be used without a previous
 "                               <Leader>[g]j.
@@ -51,40 +55,8 @@ function! s:GetSeparator( isQuery )
     return s:QueryJoin_separator
 endfunction
 function! s:Join( isKeepIndent, joinNum, separator )
-    if a:isKeepIndent && ! ingo#option#ContainsOneOf(&virtualedit, ['all', 'onemore'])
-	let l:save_virtualedit = &virtualedit
-	set virtualedit=onemore " Otherwise, when joining with an empty line, the cursor is one cell left of where we need it.
-    endif
-
-    try
-	for l:i in range(a:joinNum)
-	    " The J command inserts one space in place of the <EOL> unless
-	    " there is trailing white space or the next line starts with a ')'.
-	    " The whitespace will be handed by "ciw", but we need a special case
-	    " for ).
-	    let l:joinCommand = (a:isKeepIndent ?
-	    \   'gJi' :
-	    \   (getline(line('.') + 1) =~# '^\s*)' ?
-	    \       'Ji' :
-	    \       'J"_ciw'
-	    \   )
-	    \)
-
-	    let l:bufferTick = b:changedtick
-		execute 'normal!' l:joinCommand . a:separator . "\<Esc>"
-	    if b:changedtick == l:bufferTick
-		" The join failed (because there are no more lines in the buffer).
-		" Abort to avoid a cascade of error beeps.
-		return 0
-	    endif
-	endfor
-
-	return 1
-    finally
-	if exists('l:save_virtualedit')
-	    let &virtualedit = l:save_virtualedit
-	endif
-    endtry
+    let l:joinedCnt = ingo#join#Range(a:isKeepIndent, line('.'), line('.') + a:joinNum, a:separator)
+    return (l:joinedCnt == a:joinNum)
 endfunction
 
 function! AdvancedJoiners#QueryJoin#JoinCommand( isKeepIndent, startLnum, endLnum, separator )
@@ -110,11 +82,13 @@ endfunction
 function! AdvancedJoiners#QueryJoin#JoinWithSeparator( isKeepIndent, mode, separator, repeatMapping )
     let l:isVisualMode = (a:mode ==# 'v')
     let l:joinNum = (l:isVisualMode ? line("'>") - line("'<") : v:count)
-    call s:Join(
+    if ! s:Join(
     \   a:isKeepIndent,
     \   AdvancedJoiners#RepeatFromMode(a:mode) - (l:isVisualMode ? 1 : 0),
     \   a:separator
     \)
+	execute "normal! \<C-\>\<C-n>\<Esc>" | " Beep.
+    endif
     " The last line isn't joined in visual mode.
 
     silent! call       repeat#set(a:repeatMapping, l:joinNum)
