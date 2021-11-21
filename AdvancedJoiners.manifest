@@ -1,0 +1,6 @@
+autoload/AdvancedJoiners.vim
+autoload/AdvancedJoiners/CommentJoin.vim
+autoload/AdvancedJoiners/QueryJoin.vim
+autoload/AdvancedJoiners/QueryUnjoin.vim
+plugin/AdvancedJoiners.vim
+doc/AdvancedJoiners.txt
