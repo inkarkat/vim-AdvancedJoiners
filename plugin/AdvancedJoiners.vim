@@ -1,12 +1,7 @@
 " AdvancedJoiners.vim: More ways to (un-)join lines.
 "
 " DEPENDENCIES:
-"   - ingo/cmdargs.vim autoload script
-"   - ingo/err.vim autoload script
-"   - AdvancedJoiners/Comments.vim autoload script
-"   - AdvancedJoiners/Folds.vim autoload script
-"   - AdvancedJoiners/QueryJoin.vim autoload script
-"   - AdvancedJoiners/QueryUnjoin.vim autoload script
+"   - ingo-library.vim plugin
 "
 " Copyright: (C) 2005-2019 Ingo Karkat
 "   The VIM LICENSE applies to this script; see ':help copyright'.
@@ -14,6 +9,7 @@
 " Maintainer:	Ingo Karkat <ingo@karkat.de>
 "
 " REVISION	DATE		REMARKS
+"	009	03-Sep-2019	Add dJ mapping.
 "	008	13-May-2018	Implement :Unjoin command.
 "	007	16-Mar-2018	ENH: Add combination gcqJ = gcJ + gqJ.
 "	006	12-Mar-2018	Add gqJ mapping to join without diff quirks.
@@ -49,6 +45,11 @@ command! -bang -range   -nargs=? Unjoin     call setline(<line1>, getline(<line1
 
 
 "- mappings --------------------------------------------------------------------
+
+nnoremap <silent> <Plug>(AdvancedJoinersDeleteNext) :<C-u>let g:AdvancedJoiners#pos = getpos('.')<Bar>execute 'normal! +"' . v:register . v:count . 'dd'<Bar>call setpos('.', g:AdvancedJoiners#pos)<Bar>unlet! g:AdvancedJoiners#pos<CR>
+if ! hasmapto('<Plug>(AdvancedJoinersDeleteNext)', 'n')
+    nmap dJ <Plug>(AdvancedJoinersDeleteNext)
+endif
 
 nnoremap <silent> <Plug>(AdvancedJoinersActionCounted) :<C-u>execute 'normal!' (v:count1 + 1) . 'J'<CR>
 if ! hasmapto('<Plug>(AdvancedJoinersActionCounted)', 'n')
