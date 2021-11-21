@@ -1,0 +1,23 @@
+if (msg) {
+	msg_start(); if (foo) {
+		printf("foo!"); signal(1); }
+	else {
+		signal(0); if (last) {
+			int drop = 1; }
+	}
+}
+/* EOF */
+---
+if (msg) {
+	msg_start(); if (foo) {
+		printf("foo!");
+#ifdef HAS_SIGNAL
+		signal(1);
+#endif
+	}
+	else {
+		signal(0); if (last) {
+			int drop = 1; }
+	}
+}
+/* EOF */
