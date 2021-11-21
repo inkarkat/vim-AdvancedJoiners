@@ -1,0 +1,12 @@
+/* This can be
+ * the foo() or
+ * bar() or
+ * gaga() function.
+ *
+ * */
+---
+/
+* Give me
+* 
+* *foo()*bar()**no()*nope()*or anything. */
+---
