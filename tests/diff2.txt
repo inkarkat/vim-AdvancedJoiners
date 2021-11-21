@@ -1,0 +1,4 @@
++REM - ENH: Allow to influence given [count] via
++REM   CountJump#CountCountJumpWithWrapMessage() variant of
++REM   CountJump#CountJumpWithWrapMessage().
+
