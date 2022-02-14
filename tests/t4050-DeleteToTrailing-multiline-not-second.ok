@@ -1,0 +1,6 @@
+let foo =
+(uninteresting)
+let temp = bar
+let t3 = lulli
+(boring)
+EOF
