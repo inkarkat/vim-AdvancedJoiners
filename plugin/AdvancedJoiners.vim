@@ -70,6 +70,15 @@ if ! hasmapto('<Plug>(AdvancedJoinersNoWhitespace)', 'x')
     xmap gsJ <Plug>(AdvancedJoinersNoWhitespace)
 endif
 
+nnoremap <silent> <Plug>(AdvancedJoinersDeleteToTrailing) :<C-u>call setline('.', getline('.'))<Bar>if ! AdvancedJoiners#Delete#ToTrailing('n')<Bar>echoerr ingo#err#Get()<Bar>endif<CR>
+vnoremap <silent> <Plug>(AdvancedJoinersDeleteToTrailing) :<C-u>call setline('.', getline('.'))<Bar>if ! AdvancedJoiners#Delete#ToTrailing('v')<Bar>echoerr ingo#err#Get()<Bar>endif<CR>
+if ! hasmapto('<Plug>(AdvancedJoinersDeleteToTrailing)', 'n')
+    nmap g#J <Plug>(AdvancedJoinersDeleteToTrailing)
+endif
+if ! hasmapto('<Plug>(AdvancedJoinersDeleteToTrailing)', 'x')
+    xmap g#J <Plug>(AdvancedJoinersDeleteToTrailing)
+endif
+
 
 nnoremap <silent> <Plug>(AdvancedJoinersQuery)  :<C-u>call setline('.', getline('.'))<Bar>call AdvancedJoiners#QueryJoin#Join(0, 'n', 1, "\<lt>Plug>(AdvancedJoinersRepeat)")<CR>
 vnoremap <silent> <Plug>(AdvancedJoinersQuery)  :<C-u>call setline('.', getline('.'))<Bar>call AdvancedJoiners#QueryJoin#Join(0, 'v', 1, "\<lt>Plug>(AdvancedJoinersRepeat)")<CR>

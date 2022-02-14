@@ -34,7 +34,7 @@ USAGE
     [count]gcJ, {Visual}gcJ Join lines removing any leading comment characters and
                             following indentation. This works like adding "j" to
                             'formatoptions'.
-    :: This is a     gcJ      :: This is a multiline    gcJ     :: This is a multiline comment.
+    :: This is a      gcJ     :: This is a multiline     gcJ    :: This is a multiline comment.
     :: multiline   -------->  :: comment.             -------->
     :: comment.
                             On non-comment lines: Fuse lines together, i.e. join
@@ -54,6 +54,12 @@ USAGE
 
     [count]gsJ, {Visual}gsJ Join lines removing any trailing and leading
                             whitespace completely.
+
+    [count]g#J, {Visual}g#J Join lines on the final keywords / non-whitespace
+                            non-keywords in the first line, removing everything up
+                            to that same text on following line(s).
+    let foo =              g#J    let foo = "goodbye"
+    let bar = "goodbye" -------->
 
     :[range]Join[!] {separator}
                             Join lines in [range] with {separator} in between.
@@ -104,7 +110,7 @@ To uninstall, use the :RmVimball command.
 ### DEPENDENCIES
 
 - Requires Vim 7.0 or higher.
-- Requires the ingo-library.vim plugin ([vimscript #4433](http://www.vim.org/scripts/script.php?script_id=4433)), version 1.037 or
+- Requires the ingo-library.vim plugin ([vimscript #4433](http://www.vim.org/scripts/script.php?script_id=4433)), version 1.044 or
   higher.
 
 CONFIGURATION
