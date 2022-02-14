@@ -2,10 +2,10 @@
 "
 " DEPENDENCIES:
 "   - ingo-library.vim plugin
-"   - repeat.vim (vimscript #2136) autoload script (optional)
-"   - visualrepeat.vim (vimscript #3848) autoload script (optional)
+"   - repeat.vim (vimscript #2136) plugin (optional)
+"   - visualrepeat.vim (vimscript #3848) plugin (optional)
 "
-" Copyright: (C) 2005-2019 Ingo Karkat
+" Copyright: (C) 2005-2022 Ingo Karkat
 "   The VIM LICENSE applies to this script; see ':help copyright'.
 "
 " Maintainer:	Ingo Karkat <ingo@karkat.de>

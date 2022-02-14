@@ -2,48 +2,13 @@
 "
 " DEPENDENCIES:
 "   - ingo-library.vim plugin
-"   - repeat.vim (vimscript #2136) autoload script (optional)
-"   - visualrepeat.vim (vimscript #3848) autoload script (optional)
+"   - repeat.vim (vimscript #2136) plugin (optional)
+"   - visualrepeat.vim (vimscript #3848) plugin (optional)
 "
-" Copyright: (C) 2005-2019 Ingo Karkat
+" Copyright: (C) 2005-2022 Ingo Karkat
 "   The VIM LICENSE applies to this script; see ':help copyright'.
 "
 " Maintainer:	Ingo Karkat <ingo@karkat.de>
-"
-" REVISION	DATE		REMARKS
-"	006	04-Jun-2019	Reimplement s:Join() by delegating to (more
-"                               robust and tested) ingo#join#Range(), which has
-"                               now incorporated some corner cases from this
-"                               implementation.
-"	005	06-Mar-2018	Define default s:QueryJoin_separator so that
-"                               <Leader>[g]J can be used without a previous
-"                               <Leader>[g]j.
-"                               Refactoring: Extract s:GetSeparator() from
-"                               s:Join().
-"                               Refactoring: Split off
-"                               AdvancedJoiners#QueryJoin#JoinWithSeparator()
-"                               and use to implement new gsJ mapping.
-"	004	05-Mar-2018	Split off s:Join() from
-"                               AdvancedJoiners#QueryJoin#Join(). Add
-"                               AdvancedJoiners#QueryJoin#JoinCommand() to
-"                               implement :Join.
-"                               Need to pass a:repeatMapping to
-"                               AdvancedJoiners#QueryJoin#Join(), as it is used
-"                               with different a:isKeepIndent values by
-"                               <Leader>j and <Leader>gj.
-"	003	23-Dec-2016	ENH: Add a:isKeepIndent argument to
-"				AdvancedJoiners#QueryJoin#Join(), in order to
-"				support new <Leader>gJ variant.
-"				BUG: <Leader>J with indented "  )" line eats the
-"				parenthesis, because built-in J has special
-"				behavior there. Need to check and use "i"
-"				instead of "ciw" then.
-"				BUG: Separator is inserted one character to
-"				early when joining with an empty line. Need to
-"				temporarily :set virtualedit=onemore to
-"				correctly handle joining of empty lines.
-"	002	07-Feb-2013	Avoid clobbering the default register.
-"	001	07-Feb-2013	file creation
 let s:save_cpo = &cpo
 set cpo&vim
 

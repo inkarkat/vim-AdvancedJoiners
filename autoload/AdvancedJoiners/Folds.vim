@@ -1,16 +1,12 @@
 " AdvancedJoiners/Folds.vim: Join folded lines.
 "
 " DEPENDENCIES:
-"   - ingo/err.vim autoload script
-"   - ingo/join.vim autoload script
+"   - ingo-library.vim plugin
 "
-" Copyright: (C) 2014 Ingo Karkat
+" Copyright: (C) 2014-2022 Ingo Karkat
 "   The VIM LICENSE applies to this script; see ':help copyright'.
 "
 " Maintainer:	Ingo Karkat <ingo@karkat.de>
-"
-" REVISION	DATE		REMARKS
-"	001	08-Jun-2014	file creation from ingocommands.vim
 
 function! AdvancedJoiners#Folds#Join( isKeepSpace, startLnum, endLnum, separator )
     let [l:foldNum, l:joinCnt] = ingo#join#FoldedLines(a:isKeepSpace, a:startLnum, a:endLnum, a:separator)

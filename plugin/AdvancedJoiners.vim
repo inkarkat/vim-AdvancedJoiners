@@ -3,33 +3,10 @@
 " DEPENDENCIES:
 "   - ingo-library.vim plugin
 "
-" Copyright: (C) 2005-2019 Ingo Karkat
+" Copyright: (C) 2005-2022 Ingo Karkat
 "   The VIM LICENSE applies to this script; see ':help copyright'.
 "
 " Maintainer:	Ingo Karkat <ingo@karkat.de>
-"
-" REVISION	DATE		REMARKS
-"	009	03-Sep-2019	Add dJ mapping.
-"	008	13-May-2018	Implement :Unjoin command.
-"	007	16-Mar-2018	ENH: Add combination gcqJ = gcJ + gqJ.
-"	006	12-Mar-2018	Add gqJ mapping to join without diff quirks.
-"	005	06-Mar-2018	Add gsJ mapping to join without any whitespace
-"				in between.
-"	004	05-Mar-2018	Add :Join; it was documented, but not yet
-"				implemented :-(
-"				Adapt <Leader>J / <Leader>uj mappings to what's
-"				documented, and also define (upper-case)
-"				variants for the non-querying repeat mappings.
-"				Need to pass a:repeatMapping to
-"				AdvancedJoiners#QueryJoin#Join(), as it is used
-"				with different a:isKeepIndent values by
-"				<Leader>j and <Leader>gj.
-"				Align Plug-mapping names and consistently prefix
-"				with AdvancedJoiners.
-"	003	23-Dec-2016	Rename gJ to gcJ, so that it doesn't override
-"				the built-in gJ any longer.
-"	002	08-Jun-2014	Move in :JoinFolded from ingocommands.vim.
-"	001	07-Feb-2013	file creation
 
 " Avoid installing twice or when in unsupported Vim version.
 if exists('g:loaded_AdvancedJoiners') || (v:version < 700)

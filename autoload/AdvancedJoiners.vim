@@ -2,13 +2,10 @@
 "
 " DEPENDENCIES:
 "
-" Copyright: (C) 2005-2013 Ingo Karkat
+" Copyright: (C) 2005-2022 Ingo Karkat
 "   The VIM LICENSE applies to this script; see ':help copyright'.
 "
 " Maintainer:	Ingo Karkat <ingo@karkat.de>
-"
-" REVISION	DATE		REMARKS
-"	001	07-Feb-2013	file creation
 
 function! AdvancedJoiners#RepeatFromMode( mode )
     if a:mode ==# 'n'

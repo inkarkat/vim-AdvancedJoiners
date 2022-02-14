@@ -1,70 +1,14 @@
 " AdvancedJoiners/CommentJoin.vim: Join lines and remove comment prefixes.
 "
 " DEPENDENCIES:
-"   - QueryUnjoin.vim autoload script
-"   - ingo/msg.vim autoload script
-"   - ingo/plugin/setting.vim autoload script
-"   - ingo/regexp/comments.vim autoload script
-"   - repeat.vim (vimscript #2136) autoload script (optional)
-"   - visualrepeat.vim (vimscript #3848) autoload script (optional)
+"   - ingo-library.vim plugin
+"   - repeat.vim (vimscript #2136) plugin (optional)
+"   - visualrepeat.vim (vimscript #3848) plugin (optional)
 "
-" Copyright: (C) 2005-2018 Ingo Karkat
+" Copyright: (C) 2005-2022 Ingo Karkat
 "   The VIM LICENSE applies to this script; see ':help copyright'.
 "
 " Maintainer:	Ingo Karkat <ingo@karkat.de>
-"
-" REVISION	DATE		REMARKS
-"	008	25-Mar-2018	BUG: gqJ fuses = eats all whitespace, whereas it
-"                               should keep one whitespace. Split s:diffPattern
-"                               into s:diffPatternKeepSeparatingWhitespace,
-"                               which is now used for gqJ, and
-"                               s:diffPatternAndWhitespace, which is used by
-"                               gcqJ, as there we need to remove all whitespace
-"                               (and can't use \ze as the comment pattern still
-"                               follows).
-"                               BUG: Making the commentPattern optional by
-"                               appending \? doesn't work well. Instead, add
-"                               another branch with just
-"                               s:diffPatternKeepSeparatingWhitespace (also
-"                               different; see above!) and no commentPattern.
-"                               ENH: DWIM: Also remove diff markers from the
-"                               beginning of the first joined line. Make
-"                               AdvancedJoiners#CommentJoin#WithPattern() take
-"                               an optional Funcref and arguments, and invoke
-"                               that after the joining, but before histdel() and
-"                               repeat#set(). Define
-"                               s:RemoveLeadingDiffMarkers() for the special
-"                               action.
-"	007	16-Mar-2018	BUG: Pattern searches use very nomagic, but
-"                               a:commentPattern is a normal magic pattern; need
-"                               to switch back via \m.
-"                               ENH: Add combination of diff + optional comment
-"                               in
-"                               AdvancedJoiners#CommentJoin#DiffAndOptionalComment().
-"                               ENH: Support a:endOfLinePattern for removing
-"                               optional ^M at the end of the previous line.
-"                               Adapt s:SubstituteOnceInLine() to handle
-"                               a:pattern matching before the cursor position,
-"                               and detect and adapt the final cursor position
-"                               to correct for the removal of that character(s).
-"	006	12-Mar-2018	Refactoring: Extract
-"                               AdvancedJoiners#CommentJoin#WithPattern() from
-"                               AdvancedJoiners#CommentJoin#Join().
-"                               ENH: Add gqJ mapping implementation in
-"                               AdvancedJoiners#CommentJoin#Diff().
-"                               Prefix repeat mappings with plugin name.
-"	005	18-Jun-2013	Move s:GetCommentExpressions() into
-"				ingo-library.
-"	004	30-May-2013	Tweak the gJ fallback pattern when no comment
-"				markers are defined to avoid matching " : in "
-"				:Foobar, so that only the " comment prefix is
-"				removed.
-"	003	10-Apr-2013	Move ingoplugins.vim into ingo-library.
-"	002	07-Feb-2013	Avoid clobbering the default register.
-"				ENH: Integrate with IndentCommentPrefix.vim
-"				plugin and treat its whitelist prefixes as
-"				comments, too.
-"	001	07-Feb-2013	file creation
 let s:save_cpo = &cpo
 set cpo&vim
 
