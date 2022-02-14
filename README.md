@@ -19,7 +19,7 @@ This plugin ...
 USAGE
 ------------------------------------------------------------------------------
 
-    ["x][count]dJ           Delete the following [count] lines.
+    [count]["x]dJ           Delete the following [count] lines.
 
     :[range]JoinFolded[!] [{separator}]
                             Join all folded lines into a single long line
@@ -55,9 +55,10 @@ USAGE
     [count]gsJ, {Visual}gsJ Join lines removing any trailing and leading
                             whitespace completely.
 
-    [count]g#J, {Visual}g#J Join lines on the final keywords / non-whitespace
-                            non-keywords in the first line, removing everything up
-                            to that same text on following line(s).
+    [count]["x]g#J          Join lines on the final keywords / non-whitespace
+    {Visual}["x]g#J         non-keywords in the first line, removing everything up
+                            to that same text on following line(s) (and put that
+                            into the default register / register x).
     let foo =              g#J    let foo = "goodbye"
     let bar = "goodbye" -------->
 

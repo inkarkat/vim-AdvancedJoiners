@@ -70,8 +70,8 @@ if ! hasmapto('<Plug>(AdvancedJoinersNoWhitespace)', 'x')
     xmap gsJ <Plug>(AdvancedJoinersNoWhitespace)
 endif
 
-nnoremap <silent> <Plug>(AdvancedJoinersDeleteToTrailing) :<C-u>call setline('.', getline('.'))<Bar>if ! AdvancedJoiners#Delete#ToTrailing('n')<Bar>echoerr ingo#err#Get()<Bar>endif<CR>
-vnoremap <silent> <Plug>(AdvancedJoinersDeleteToTrailing) :<C-u>call setline('.', getline('.'))<Bar>if ! AdvancedJoiners#Delete#ToTrailing('v')<Bar>echoerr ingo#err#Get()<Bar>endif<CR>
+nnoremap <silent> <Plug>(AdvancedJoinersDeleteToTrailing) :<C-u>call setline('.', getline('.'))<Bar>if ! AdvancedJoiners#Delete#ToTrailing('n', v:register)<Bar>echoerr ingo#err#Get()<Bar>endif<CR>
+vnoremap <silent> <Plug>(AdvancedJoinersDeleteToTrailing) :<C-u>call setline('.', getline('.'))<Bar>if ! AdvancedJoiners#Delete#ToTrailing('v', v:register)<Bar>echoerr ingo#err#Get()<Bar>endif<CR>
 if ! hasmapto('<Plug>(AdvancedJoinersDeleteToTrailing)', 'n')
     nmap g#J <Plug>(AdvancedJoinersDeleteToTrailing)
 endif

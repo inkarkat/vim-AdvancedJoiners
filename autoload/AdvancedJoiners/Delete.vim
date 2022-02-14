@@ -7,7 +7,7 @@
 "
 " Maintainer:	Ingo Karkat <ingo@karkat.de>
 
-function! AdvancedJoiners#Delete#ToTrailing( mode ) abort
+function! AdvancedJoiners#Delete#ToTrailing( mode, register ) abort
     let l:firstLnum = line('.')
     let l:firstLine = getline(l:firstLnum)
     let l:startOfChange = len(l:firstLine) + 1
@@ -23,13 +23,17 @@ function! AdvancedJoiners#Delete#ToTrailing( mode ) abort
 	return 1
     endif
 
+    let l:removedParts = []
     let l:lineNum = AdvancedJoiners#RepeatFromMode(a:mode)
     let l:joinNum = l:lineNum - (a:mode ==# 'v' ? 1 : 0) " The last line isn't joined in visual mode.
     for l:joinCnt in range(1, l:joinNum)
 	let l:line = getline(l:firstLnum + l:joinCnt)
 	let l:startOfTrailingText = stridx(l:line, l:trailingText)
-	if l:startOfTrailingText != -1
+	if l:startOfTrailingText == -1
+	    call add(l:removedParts, '')
+	else
 	    let l:endOfTrailingText = l:startOfTrailingText + len(l:trailingText)
+	    call add(l:removedParts, strpart(l:line, 0, l:endOfTrailingText))
 	    let l:line = strpart(l:line, l:endOfTrailingText)
 	endif
 	let l:firstLine .= l:line
@@ -40,8 +44,16 @@ function! AdvancedJoiners#Delete#ToTrailing( mode ) abort
     call cursor(l:firstLnum, l:startOfChange)
     call ingo#change#Set([0, l:firstLnum, l:startOfChange, 0], [0, l:firstLnum, len(l:firstLine) + 1, 0])
 
+    let l:nonEmptyRemovedParts = ingo#list#NonEmpty(copy(l:removedParts))
+    if len(l:nonEmptyRemovedParts) > 1
+	call setreg(a:register, join(l:removedParts, "\n") . "\n")
+    else
+	call setreg(a:register, l:nonEmptyRemovedParts[0])
+    endif
+
     silent! call       repeat#set("\<Plug>(AdvancedJoinersDeleteToTrailing)", l:joinNum)
     silent! call visualrepeat#set("\<Plug>(AdvancedJoinersDeleteToTrailing)", l:joinNum)
+    silent! call    repeat#setreg("\<Plug>(AdvancedJoinersDeleteToTrailing)", a:register)
     return 1
 endfunction
 
