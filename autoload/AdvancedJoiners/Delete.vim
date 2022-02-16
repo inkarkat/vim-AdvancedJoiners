@@ -51,6 +51,10 @@ function! AdvancedJoiners#Delete#ToTrailing( mode, register ) abort
 	call setreg(a:register, l:nonEmptyRemovedParts[0])
     endif
 
+    if l:joinNum > &report
+	echo printf('%d line%s joined', l:joinNum, (l:joinNum == 1 ? '' : 's'))
+    endif
+
     silent! call       repeat#set("\<Plug>(AdvancedJoinersDeleteToTrailing)", l:joinNum)
     silent! call visualrepeat#set("\<Plug>(AdvancedJoinersDeleteToTrailing)", l:joinNum)
     silent! call    repeat#setreg("\<Plug>(AdvancedJoinersDeleteToTrailing)", a:register)

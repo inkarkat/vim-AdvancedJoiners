@@ -3,6 +3,7 @@
 call vimtest#SkipAndQuitIf(! vimtest#features#SupportsNormalWithCount(), 'Need support for :normal with count')
 
 call setline(1, ['let foo =', 'let temp = bar', '(uninteresting)', '(nothing here)', '(boring)', 'EOF'])
+set report=3
 
 call vimtest#StartTap()
 call vimtap#Plan(1)
