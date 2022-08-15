@@ -31,6 +31,12 @@ USAGE
                             default "Join [count] lines", which joins one line
                             less that expected.
 
+    [count]g\J, {Visual}g\J Join lines removing a line continuation character from
+                            the end of each line (\ by default) in all consecutive
+                            lines that end with the line continuation character
+                            (or {count} times); whitespace before and after it is
+                            condensed to a single space.
+
     [count]gcJ, {Visual}gcJ Join lines removing any leading comment characters and
                             following indentation. This works like adding "j" to
                             'formatoptions'.

@@ -1,0 +1,45 @@
+--
+two \
+words
+another line
+--
+in \
+this \
+block \
+are
+three \
+separate
+line \
+continuations
+--
+one \
+more \
+word
+--
+1 2 3 4 5
+--
+no-spaces-required
+--
+with-\
+\
+empty\
+ \
+\
+lines
+--
+lots  \
+  of \
+	white	\
+	    space	    \
+    here
+--
+trailing  \ 
+    white	\	
+    space    \   	   
+    after \        
+the \   
+continuation
+--
+no
+continuation
+EOF

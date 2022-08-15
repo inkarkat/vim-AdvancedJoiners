@@ -34,6 +34,15 @@ if ! hasmapto('<Plug>(AdvancedJoinersActionCounted)', 'n')
 endif
 
 
+nnoremap <silent> <Plug>(AdvancedJoinersLineContinuation) :<C-u>call setline('.', getline('.'))<Bar>call AdvancedJoiners#LineContinuation#Join('n')<CR>
+vnoremap <silent> <Plug>(AdvancedJoinersLineContinuation) :<C-u>call setline('.', getline('.'))<Bar>call AdvancedJoiners#LineContinuation#Join('v')<CR>
+if ! hasmapto('<Plug>(AdvancedJoinersLineContinuation)', 'n')
+    nmap g<Bslash>J <Plug>(AdvancedJoinersLineContinuation)
+endif
+if ! hasmapto('<Plug>(AdvancedJoinersLineContinuation)', 'x')
+    xmap g<Bslash>J <Plug>(AdvancedJoinersLineContinuation)
+endif
+
 nnoremap <silent> <Plug>(AdvancedJoinersComment) :<C-u>call setline('.', getline('.'))<Bar>call AdvancedJoiners#CommentJoin#Comments('n')<CR>
 vnoremap <silent> <Plug>(AdvancedJoinersComment) :<C-u>call setline('.', getline('.'))<Bar>call AdvancedJoiners#CommentJoin#Comments('v')<CR>
 if ! hasmapto('<Plug>(AdvancedJoinersComment)', 'n')
