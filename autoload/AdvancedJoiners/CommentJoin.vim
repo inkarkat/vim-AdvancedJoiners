@@ -56,8 +56,7 @@ function! AdvancedJoiners#CommentJoin#WithPattern( endOfLinePattern, commentPatt
 
     let l:noCommentCnt = 0
     let l:isRemoveComments = 1
-    let l:lineNum = AdvancedJoiners#RepeatFromMode(a:mode)
-    let l:joinNum = l:lineNum - (a:mode ==# 'v' ? 1 : 0) " The last line isn't joined in visual mode.
+    let l:joinNum = AdvancedJoiners#JoinNum(a:mode)
 
     if ! search('\V\n\s\*\m' . a:commentPattern, 'cnW', line('.'))
 	" Note: Search for /\n/ does not match in empty line, so explicitly

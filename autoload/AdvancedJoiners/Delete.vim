@@ -24,8 +24,7 @@ function! AdvancedJoiners#Delete#ToTrailing( mode, register ) abort
     endif
 
     let l:removedParts = []
-    let l:lineNum = AdvancedJoiners#RepeatFromMode(a:mode)
-    let l:joinNum = l:lineNum - (a:mode ==# 'v' ? 1 : 0) " The last line isn't joined in visual mode.
+    let l:joinNum = AdvancedJoiners#JoinNum(a:mode)
     for l:joinCnt in range(1, l:joinNum)
 	let l:line = getline(l:firstLnum + l:joinCnt)
 	let l:startOfTrailingText = stridx(l:line, l:trailingText)

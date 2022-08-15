@@ -45,13 +45,8 @@ function! AdvancedJoiners#QueryJoin#JoinCommand( isKeepIndent, startLnum, endLnu
 endfunction
 
 function! AdvancedJoiners#QueryJoin#JoinWithSeparator( isKeepIndent, mode, separator, repeatMapping )
-    let l:isVisualMode = (a:mode ==# 'v')
-    let l:joinNum = (l:isVisualMode ? line("'>") - line("'<") : v:count)
-    if ! s:Join(
-    \   a:isKeepIndent,
-    \   AdvancedJoiners#RepeatFromMode(a:mode) - (l:isVisualMode ? 1 : 0),
-    \   a:separator
-    \)
+    let l:joinNum = AdvancedJoiners#JoinNum(a:mode)
+    if ! s:Join(a:isKeepIndent, l:joinNum, a:separator)
 	execute "normal! \<C-\>\<C-n>\<Esc>" | " Beep.
     endif
     " The last line isn't joined in visual mode.

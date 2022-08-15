@@ -99,12 +99,12 @@ endfunction
 let s:QueryUnjoin_separator = '\s\+'
 function! AdvancedJoiners#QueryUnjoin#Unjoin( mode, isQuery )
     let l:startLnum = line('.')
-    let l:unjoinNum = (a:mode ==# 'v' ? line("'>") - line("'<") + 1 : v:count)
+    let l:unjoinNum = AdvancedJoiners#RepeatFromMode(a:mode)
 
     if a:isQuery
 	let s:QueryUnjoin_separator = input('Enter separator pattern: ')
     endif
-    for l:i in range(AdvancedJoiners#RepeatFromMode(a:mode))
+    for l:i in range(l:unjoinNum)
 	let l:lnum = line('.')
 	if l:i > 0
 	    normal! j

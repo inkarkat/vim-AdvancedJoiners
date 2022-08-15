@@ -7,6 +7,17 @@
 "
 " Maintainer:	Ingo Karkat <ingo@karkat.de>
 
+function! AdvancedJoiners#JoinNum( mode ) abort
+    if a:mode ==# 'n'
+	return v:count1
+    elseif a:mode ==# 'v'
+	" The last line isn't joined in visual mode.
+	return line("'>") - line("'<")
+    else
+	throw "unhandled mode '" . a:mode . "'"
+    endif
+endfunction
+
 function! AdvancedJoiners#RepeatFromMode( mode )
     if a:mode ==# 'n'
 	return v:count1
