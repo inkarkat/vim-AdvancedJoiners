@@ -7,9 +7,9 @@
 "
 " Maintainer:	Ingo Karkat <ingo@karkat.de>
 
-function! AdvancedJoiners#JoinNum( mode ) abort
+function! AdvancedJoiners#JoinNum( mode, ... ) abort
     if a:mode ==# 'n'
-	return v:count1
+	return (a:0 && v:count == 0 ? a:1 : v:count1)
     elseif a:mode ==# 'v'
 	" The last line isn't joined in visual mode.
 	return line("'>") - line("'<")
