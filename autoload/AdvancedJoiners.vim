@@ -18,7 +18,7 @@ function! AdvancedJoiners#JoinNum( mode ) abort
     endif
 endfunction
 
-function! AdvancedJoiners#RepeatFromMode( mode )
+function! AdvancedJoiners#UnjoinNum( mode )
     if a:mode ==# 'n'
 	return v:count1
     elseif a:mode ==# 'v'
