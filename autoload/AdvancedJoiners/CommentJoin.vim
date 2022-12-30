@@ -13,17 +13,17 @@ let s:save_cpo = &cpo
 set cpo&vim
 
 function! s:RemoveHyphen()
-    if search('\V\w-\%# \s\*\%(\w\|-\)', 'bcnW', line('.'))
+    if search('\m\w-\%# \s*\%(\w\|-\)', 'bcnW', line('.'))
 	normal! "_X
     endif
 endfunction
 function! s:SubstituteOnceInLine( pattern, replacement, isMoveLeft )
     let l:save_cursor = getpos('.')
 
-    if ! search(a:pattern, 'cnW', line('.'))
+    if ! search('\m' . a:pattern, 'cnW', line('.'))
 	" Not on a:pattern; there might be a:endOfLinePattern before use that we
 	" need to match:
-	if search(a:pattern, 'bcW', line('.'))
+	if search('\m' . a:pattern, 'bcW', line('.'))
 	    " Yes, a:endOfLinePattern will be removed, too. Use its start
 	    " position (note: no 'n' flag here!) for the final desired cursor
 	    " position.
@@ -52,16 +52,16 @@ function! AdvancedJoiners#CommentJoin#WithPattern( endOfLinePattern, commentPatt
     " Since the cursor is positioned either on the whitespace (if the original
     " line did not end with whitespace) or after it, the whitespace before
     " a:commentPattern is optional, anyway, and handles that case, too.
-    let l:joinedCommentPattern = a:endOfLinePattern . '\V\%# \?\m' . a:commentPattern
+    let l:joinedCommentPattern = a:endOfLinePattern . '\%# \?' . a:commentPattern
 
     let l:noCommentCnt = 0
     let l:isRemoveComments = 1
     let l:joinNum = AdvancedJoiners#JoinNum(a:mode)
 
-    if ! search('\V\n\s\*\m' . a:commentPattern, 'cnW', line('.'))
+    if ! search('\m\n\s*' . a:commentPattern, 'cnW', line('.'))
 	" Note: Search for /\n/ does not match in empty line, so explicitly
 	" search for that corner case.
-	if ! (empty(getline('.')) && search('\V\^\s\*\m' . a:commentPattern, 'cnW', line('.') + 1))
+	if ! (empty(getline('.')) && search('\m^\s*' . a:commentPattern, 'cnW', line('.') + 1))
 	    " The next line does not start with a comment string, so switch to "fuse
 	    " mode" (i.e. joining and removing any whitespace) instead.
 	    let l:joinedCommentPattern = '\%(^\%#\|' . a:endOfLinePattern . '\%# \s*\)'
@@ -71,7 +71,7 @@ function! AdvancedJoiners#CommentJoin#WithPattern( endOfLinePattern, commentPatt
 
     let l:didSubstitute = 0
     for l:joinCnt in range(1, l:joinNum)
-	let l:isEndsWithWhitespace = search('\s$', 'cnW', line('.'))
+	let l:isEndsWithWhitespace = search('\m\s$', 'cnW', line('.'))
 
 	let l:bufferTick = b:changedtick
 	    if ! l:isRemoveComments && l:isEndsWithWhitespace
@@ -105,7 +105,7 @@ function! AdvancedJoiners#CommentJoin#WithPattern( endOfLinePattern, commentPatt
 	    " character if the original line ended with whitespace. In the
 	    " latter case, the substitution requires that we move to the left,
 	    " so that the inserted indent is to the right of the cursor.
-	    call s:SubstituteOnceInLine('\V\%#\s\+', ' ', l:isEndsWithWhitespace)
+	    call s:SubstituteOnceInLine('\%#\s\+', ' ', l:isEndsWithWhitespace)
 	else
 	    let l:noCommentCnt += 1
 	endif
